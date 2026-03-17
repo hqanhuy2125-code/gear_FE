@@ -1,0 +1,212 @@
+.driver-container {
+  padding-bottom: var(--section-spacing);
+}
+
+.driver-header {
+  padding: 100px 0 64px;
+  background: linear-gradient(180deg, #6366f1 0%, #a5b4fc 60%, #ffffff 100%);
+  text-align: center;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 60px;
+  position: relative;
+  overflow: hidden;
+}
+
+.driver-info-section {
+  padding: var(--section-padding) 0;
+  background: linear-gradient(180deg, #6366f1 0%, #a5b4fc 60%, #ffffff 100%);
+}
+
+.driver-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(0,0,0,0.05) 1px, transparent 1px);
+  background-size: 36px 36px;
+  pointer-events: none;
+}
+
+.driver-title {
+  font-size: 40px;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, var(--clr-txt) 0%, #6366f1 180%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.title-underline {
+  width: 60px;
+  height: 4px;
+  background-color: #6366f1;
+  margin: 0 auto 2rem auto;
+  border-radius: 2px;
+}
+
+.driver-subtitle {
+  font-size: 18px;
+  color: var(--text-light);
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.driver-list {
+  margin-top: 40px;
+}
+
+.driver-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 32px;
+  margin-top: 60px;
+}
+
+.driver-card {
+  background: white;
+  border-radius: 20px;
+  padding: 32px;
+  border: 1.5px solid var(--border-color);
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 32px rgba(99, 102, 241, 0.06);
+}
+
+.driver-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 24px 48px rgba(99, 102, 241, 0.12);
+  border-color: #6366f1;
+}
+
+.driver-card-header {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.driver-icon-wrap {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6366f1;
+  flex-shrink: 0;
+}
+
+.driver-title-area h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.driver-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.version-pill {
+  padding: 4px 12px;
+  background-color: #e0e7ff;
+  color: #6366f1;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.date-text {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.driver-description {
+  font-size: 0.95rem;
+  color: var(--text-light);
+  line-height: 1.6;
+  margin-bottom: 32px;
+}
+
+.driver-card-footer {
+  margin-top: auto;
+}
+
+.download-cta {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 14px;
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.download-cta:hover {
+  background: linear-gradient(135deg, #4338ca, #4f46e5);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+}
+
+.driver-info-section {
+  padding: var(--section-padding) 0;
+  background: linear-gradient(160deg, #e0e7ff 0%, #ffffff 100%);
+}
+
+.driver-info-container {
+  display: flex;
+  align-items: center;
+  gap: 80px;
+}
+
+.driver-info-image {
+  flex: 1;
+}
+
+.driver-info-image img {
+  width: 100%;
+  max-width: 500px;
+  border-radius: 24px;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.08);
+  display: block;
+  margin: 0 auto;
+}
+
+.driver-info-text {
+  flex: 1.2;
+}
+
+.driver-info-text h2 {
+  font-size: 2rem;
+  font-weight: 900;
+  margin-bottom: 24px;
+  color: #4f46e5;
+}
+
+@media (max-width: 992px) {
+  .driver-info-container {
+    flex-direction: column;
+    text-align: center;
+    gap: 40px;
+  }
+}
+
+@media (max-width: 640px) {
+  .driver-grid { grid-template-columns: 1fr; }
+  .driver-card { padding: 24px; }
+}

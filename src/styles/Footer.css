@@ -1,0 +1,185 @@
+/* =============================================
+   SCYTOL FOOTER — Light Theme (Madlions-inspired)
+   ============================================= */
+
+.site-footer {
+  background-color: var(--clr-txt);   /* dark footer on light site — Madlions uses contrast bottom */
+  border-top: none;
+  padding: 64px 0 0;
+  color: rgba(255,255,255,0.75);
+  font-family: 'Inter', sans-serif;
+}
+
+.footer-inner {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 var(--pad-x);
+}
+
+.footer-columns {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 2fr;
+  gap: 4rem;
+  margin-bottom: 4rem;
+}
+
+/* ── BRAND COL ───────────────────────────────── */
+.footer-brand-title {
+  font-size: 1.2rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.25rem;
+  color: #ffffff;
+}
+
+.footer-text {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: rgba(255,255,255,0.55);
+  margin-bottom: 0.85rem;
+}
+
+.footer-email a {
+  color: rgba(255,255,255,0.8);
+  text-decoration: underline;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+.footer-email a:hover { color: #ffffff; }
+
+/* ── LINKS COL ───────────────────────────────── */
+.footer-heading {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 1.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin-bottom: 0.7rem;
+}
+
+.footer-links a {
+  color: rgba(255,255,255,0.5);
+  text-decoration: none;
+  font-size: 0.88rem;
+  transition: color 0.2s;
+}
+.footer-links a:hover { color: #ffffff; }
+
+/* ── NEWSLETTER ──────────────────────────────── */
+.newsletter-title {
+  font-size: 0.95rem;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+
+.footer-newsletter-form {
+  display: flex;
+  margin-top: 1.25rem;
+  background: rgba(255,255,255,0.07);
+  border: 1.5px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  overflow: hidden;
+  max-width: 400px;
+}
+
+.footer-input {
+  flex: 1;
+  border: none;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.88rem;
+  outline: none;
+  color: #ffffff;
+}
+.footer-input::placeholder { color: rgba(255,255,255,0.35); }
+
+.footer-submit-btn {
+  background: transparent;
+  border: none;
+  padding: 0 1rem;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: rgba(255,255,255,0.5);
+  transition: color 0.2s;
+}
+.footer-submit-btn:hover { color: #ffffff; }
+
+/* ── BOTTOM BAR ──────────────────────────────── */
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding: 20px 0 24px;
+  margin-top: 0;
+}
+
+.footer-bottom-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+/* Social icons */
+.footer-social {
+  display: flex;
+  gap: 1.1rem;
+}
+
+.social-icon {
+  color: rgba(255,255,255,0.45);
+  transition: color 0.2s, transform 0.2s;
+  display: flex;
+  align-items: center;
+}
+.social-icon:hover {
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+/* Copyright */
+.footer-copy {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.35);
+  margin: 0;
+}
+
+/* Payment icons */
+.footer-payments {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.payment-icon {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 0.06em;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 4px;
+  padding: 3px 7px;
+}
+
+/* ── RESPONSIVE ──────────────────────────────── */
+@media (max-width: 1024px) {
+  .footer-columns { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+  .footer-inner { padding: 0 24px; }
+}
+
+@media (max-width: 640px) {
+  .footer-columns { grid-template-columns: 1fr; }
+  .footer-bottom-row { flex-direction: column; text-align: center; }
+  .footer-social { justify-content: center; }
+  .footer-payments { justify-content: center; }
+}

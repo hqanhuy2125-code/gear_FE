@@ -1,0 +1,108 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800&display=swap');
+
+/* =============================================
+   SCYTOL — Global Design Tokens (Light Theme)
+   Inspired by Madlions layout, pastel palette
+   ============================================= */
+
+:root {
+  /* Brand palette */
+  --clr-accent:       #e8572a;     /* warm coral-orange (primary CTA) */
+  --clr-accent-light: #ff7a4d;
+  --clr-accent-dim:   rgba(232,87,42,0.12);
+  --clr-accent-glow:  rgba(232,87,42,0.28);
+
+  /* == THEME / CONTEXT VARIABLES ==
+     Default to main brand tokens, but can be overridden
+     by category container classes (e.g. .cat-keyboards) */
+  --theme-accent:      var(--clr-accent);
+  --theme-accent-dim:  var(--clr-accent-dim);
+  --theme-accent-glow: var(--clr-accent-glow);
+  --theme-bg:          var(--clr-bg);
+  --theme-bg-alt:      var(--clr-bg-alt);
+  --theme-bg-light:    var(--clr-border-light);
+
+
+  /* Light background layers */
+  --clr-bg:           #fafbfc;     /* page root */
+  --clr-bg-alt:       #f3f5f7;     /* alternating section */
+  --clr-bg-card:      #ffffff;
+  --clr-bg-hero:      #f0f4f8;
+
+  /* Text */
+  --clr-txt:          #0f1117;
+  --clr-txt-2:        #3d4250;
+  --clr-txt-3:        #8892a4;
+
+  /* Borders */
+  --clr-border:       #e4e8ef;
+  --clr-border-light: #f0f2f5;
+
+  /* Category badge colours */
+  --clr-blue:         #2563eb;
+  --clr-purple:       #7c3aed;
+  --clr-green:        #16a34a;
+
+  /* Spacing */
+  --max-w:            1260px;
+  --pad-x:            60px;
+  --radius:           14px;
+
+  /* Typography */
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: light;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Legacy var aliases used by older components */
+:root {
+  --primary-color:    var(--clr-accent);
+  --border-color:     var(--clr-border);
+  --bg-alternate:     var(--clr-bg-alt);
+  --text-light:       var(--clr-txt-3);
+  --text-muted:       var(--clr-txt-3);
+  --text-main:        var(--clr-txt);
+  --bg-light:         var(--clr-bg-alt);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: var(--clr-bg);
+  color: var(--clr-txt);
+  min-height: 100vh;
+}
+
+img { max-width: 100%; display: block; }
+a   { color: inherit; }
+button { font-family: inherit; }
+
+/* Utility: full-width section container */
+.container {
+  max-width: var(--max-w);
+  margin-inline: auto;
+  padding-inline: var(--pad-x);
+}
+
+/* Section white wash */
+.section-white { background: #ffffff; }
+
+/* =========================================
+   PASTEL SECTION BLOCKS
+   ========================================= */
+.section-pastel-blue { background: #eef4ff; }
+.section-pastel-beige { background: #f6efe9; }
+.section-pastel-purple { background: #f3efff; }
+.section-pastel-green { background: #f0fbf4; }
