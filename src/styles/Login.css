@@ -11,19 +11,19 @@
   max-width: 480px;
   margin: 140px auto;
   padding: 48px;
-  background-color: #ffffff;
-  border-radius: 24px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+  background-color: var(--cy-bg-card);
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); border-radius: 0;
+  box-shadow: var(--cy-glow);
   border: 1px solid var(--border-color);
 }
 
 .login-card {
-  background: #ffffff;
-  border-radius: 32px;
+  background: var(--cy-bg-card);
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); border-radius: 0;
   padding: 4.5rem 4rem;
   width: 100%;
   max-width: 520px;
-  box-shadow: 0 40px 100px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--cy-glow);
   border: 1px solid rgba(0, 0, 0, 0.02);
 }
 
@@ -67,7 +67,7 @@
   background-color: var(--bg-light);
   border: 1px solid var(--border-color);
   padding: 1.1rem 1.4rem;
-  border-radius: 12px;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); border-radius: 0;
   color: var(--text-main);
   font-size: 1.05rem;
   transition: all 0.2s ease;
@@ -76,7 +76,7 @@
 .form-group input:focus {
   outline: none;
   border-color: var(--clr-accent);
-  background-color: #fff;
+  background-color: var(--cy-bg-card);
   box-shadow: 0 0 0 4px var(--clr-accent-dim);
 }
 
@@ -112,9 +112,9 @@
   margin-top: 1rem;
   padding: 1.25rem;
   background: var(--clr-txt);
-  color: #fff;
+  color: var(--cy-bg-card);
   border: none;
-  border-radius: 10px;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); border-radius: 0;
   font-size: 1.05rem;
   font-weight: 700;
   cursor: pointer;
@@ -149,7 +149,7 @@
 @media (max-width: 640px) {
   .login-card {
     padding: 3rem 1.5rem;
-    border-radius: 24px;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); border-radius: 0;
   }
 }
 
@@ -158,13 +158,13 @@
   top: 90px;
   right: 24px;
   background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
-  color: #fff;
+  color: var(--cy-bg-card);
   padding: 16px 20px;
-  border-radius: 14px;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); border-radius: 0;
   display: flex;
   align-items: center;
   gap: 14px;
-  box-shadow: 0 8px 32px rgba(22, 163, 74, 0.35);
+  box-shadow: var(--cy-glow);
   z-index: 9999;
   max-width: 360px;
   animation: toastSlideIn 0.4s cubic-bezier(0.23,1,0.32,1);
@@ -176,4 +176,44 @@
 @keyframes toastSlideIn {
   from { opacity: 0; transform: translateX(100px); }
   to   { opacity: 1; transform: translateX(0); }
-} 
+}
+
+/* Error message */
+.login-error-msg {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); border-radius: 0;
+  padding: 0.85rem 1.1rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin-bottom: -0.5rem;
+}
+
+/* Loading spinner inside button */
+.login-spinner-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.login-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: var(--cy-bg-card);
+  border-radius: 50%;
+  animation: loginSpin 0.6s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes loginSpin {
+  to { transform: rotate(360deg); }
+}
+
+.login-submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}

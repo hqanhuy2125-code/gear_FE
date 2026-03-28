@@ -8,23 +8,34 @@ export const CartProvider = ({ children }) => {
     const savedCart = localStorage.getItem('cartItems');
     return savedCart ? JSON.parse(savedCart) : [];
   });
-  const [toasts, setToasts] = useState([]);
+  const [activeToast, setActiveToast] = useState(null);
+  const [isClosing, setIsClosing] = useState(false);
 
   useEffect(() => {
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
   }, [cartItems]);
 
   const addToCart = (product) => {
-    const toastId = Date.now() + Math.random();
-    setToasts(prev => [...prev, { id: toastId, name: product.name, hiding: false }]);
+    // 1. Made to Order Alert (keeping existing logic)
+    if (product.isOrderOnly) {
+      alert("Sản phẩm này cần từ 3-7 ngày để chuẩn bị.");
+    }
 
+    // 2. Stock Check
+    if (product.stock <= 0 && !product.isPreOrder && !product.isOrderOnly) {
+      alert("Sản phẩm này hiện đang hết hàng.");
+      return;
+    }
+
+    // Show detailed modal
+    const stockMsg = Math.floor(Math.random() * 20) + 1;
+    setActiveToast({ ...product, randomStock: stockMsg });
+    setIsClosing(false);
+
+    // Auto-close after 5s
     setTimeout(() => {
-      setToasts(prev => prev.map(t => t.id === toastId ? { ...t, hiding: true } : t));
-      setTimeout(() => {
-        setToasts(prev => prev.filter(t => t.id !== toastId));
-      }, 300);
-    }, 3000);
-
+      closeToast();
+    }, 5000);
 
     setCartItems(prevItems => {
       const existingItem = prevItems.find(item => item.id === product.id);
@@ -35,6 +46,14 @@ export const CartProvider = ({ children }) => {
       }
       return [...prevItems, { ...product, quantity: 1 }];
     });
+  };
+
+  const closeToast = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setActiveToast(null);
+      setIsClosing(false);
+    }, 400); // match animation
   };
 
   const removeFromCart = (productId) => {
@@ -75,18 +94,34 @@ export const CartProvider = ({ children }) => {
       decreaseQuantity,
       clearCart,
       cartCount,
-      cartTotal
+      cartTotal,
+      activeToast,
+      closeToast
     }}>
       {children}
       
-      {toasts.length > 0 && (
-        <div className="toast-container">
-          {toasts.map(toast => (
-            <div key={toast.id} className={`toast ${toast.hiding ? 'hiding' : ''}`}>
-              <span className="toast-icon">✅</span>
-              <span>Đã thêm <strong>{toast.name}</strong> vào giỏ hàng!</span>
+      {activeToast && (
+        <div className={`cart-modal-overlay ${isClosing ? 'hiding' : ''}`} onClick={closeToast}>
+          <div className={`cart-modal-content ${isClosing ? 'hiding' : ''}`} onClick={e => e.stopPropagation()}>
+            <div className="cart-modal-header">
+              <h3>✅ Đã thêm vào giỏ hàng</h3>
+              <button className="close-modal-btn" onClick={closeToast}>&times;</button>
             </div>
-          ))}
+            
+            <div className="cart-modal-body">
+              <img src={activeToast.image} alt={activeToast.name} className="cm-img" />
+              <div className="cm-info">
+                <h4>{activeToast.name}</h4>
+                <p className="cm-price">{activeToast.price.toLocaleString('vi-VN')} ₫</p>
+                <p className="cm-stock">📦 Kho: Còn <strong>{activeToast.randomStock}</strong> sản phẩm</p>
+              </div>
+            </div>
+
+            <div className="cart-modal-footer">
+              <button className="btn-continue" onClick={closeToast}>Tiếp tục mua sắm</button>
+              <a href="/cart" className="btn-view-cart">Xem giỏ hàng →</a>
+            </div>
+          </div>
         </div>
       )}
     </CartContext.Provider>

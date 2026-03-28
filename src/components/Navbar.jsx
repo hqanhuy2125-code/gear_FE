@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, User, ShoppingCart, LogOut, X } from 'lucide-react';
+import { Search, ShoppingCart, ClipboardList, X, Bell } from 'lucide-react';
 import { CartContext } from '../contexts/CartContext';
+import { useAuth } from '../contexts/AuthContext';
 import { products } from '../data/products';
 import '../styles/Navbar.css';
+
+let searchTimeout;
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -11,40 +14,19 @@ const Navbar = () => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState([]);
+  const [notifications, setNotifications] = useState([]);
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const notifRef = useRef(null);
   const searchRef = useRef(null);
   const userMenuRef = useRef(null);
   const { cartCount } = useContext(CartContext);
-
-  const loadUserFromStorage = () => {
-    const stored =
-      localStorage.getItem('user') || localStorage.getItem('currentUser');
-    if (!stored) return null;
-    try {
-      return JSON.parse(stored);
-    } catch {
-      return null;
-    }
-  };
-
-  const [user, setUser] = useState(loadUserFromStorage);
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-
+    const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
-
-    const handleUserLogin = () => {
-      setUser(loadUserFromStorage());
-    };
-    window.addEventListener('userLogin', handleUserLogin);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('userLogin', handleUserLogin);
-    };
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   // Handle outside click to close search
@@ -56,23 +38,87 @@ const Navbar = () => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
         setIsUserMenuOpen(false);
       }
+      if (notifRef.current && !notifRef.current.contains(event.target)) {
+        setIsNotifOpen(false);
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Handle real-time search logic
-  useEffect(() => {
-    if (searchTerm.trim() === '') {
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    
+    if (value.trim() === '') {
       setSearchResults([]);
       return;
     }
     
-    const results = products.filter(product => 
-      product.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setSearchResults(results.slice(0, 5)); // Limit to 5 results
-  }, [searchTerm]);
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(async () => {
+      try {
+        const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5130';
+        const res = await fetch(`${baseUrl}/api/products/search?q=${encodeURIComponent(value)}&pageSize=5`);
+        if (res.ok) {
+          const data = await res.json();
+          setSearchResults(data.items || []);
+        }
+      } catch (err) {
+        if (err.name !== 'TypeError') {
+          console.error("Search failed:", err);
+        }
+      }
+    }, 300);
+  };
+
+  // Handle Notifications
+  useEffect(() => {
+    if (user) {
+      fetchNotifications();
+      const interval = setInterval(fetchNotifications, 30000); // Polling every 30s
+      return () => clearInterval(interval);
+    }
+  }, [user]);
+
+  const fetchNotifications = async () => {
+    const userId = user?.id;
+    if (!userId || userId === "undefined") return;
+    const token = localStorage.getItem('token');
+    try {
+      const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5130';
+      const res = await fetch(`${baseUrl}/api/notifications/${userId}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setNotifications(data);
+      }
+    } catch (err) {
+      // Ignore TypeError (network error) to prevent console spam / looping when backend is down
+      if (err.name !== 'TypeError') {
+        console.error("Fetch notifications failed:", err);
+      }
+    }
+  };
+
+  const markNotifAsRead = async (id) => {
+    const token = localStorage.getItem('token');
+    try {
+      const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5130';
+      await fetch(`${baseUrl}/api/notifications/${id}/read`, { 
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      setNotifications(prev => prev.map(n => n.id === id ? { ...n, isRead: true } : n));
+    } catch (err) {
+      if (err.name !== 'TypeError') {
+        console.error("Mark notification as read failed:", err);
+      }
+    }
+  };
+
+  const unreadCount = notifications.filter(n => !n.isRead).length;
 
   const toggleSearch = () => {
     setIsSearchOpen(!isSearchOpen);
@@ -80,9 +126,7 @@ const Navbar = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('currentUser');
-    setUser(null);
+    logout();
     setIsUserMenuOpen(false);
     navigate('/');
   };
@@ -122,6 +166,7 @@ const Navbar = () => {
           <Link to="/headphones" className="nav-link">Headphones</Link>
           <Link to="/accessories" className="nav-link">Accessories</Link>
           <Link to="/web-driver" className="nav-link">Web Driver</Link>
+          <Link to="/reviews" className="nav-link">Reviews</Link>
           <Link to="/blog" className="nav-link">Blog</Link>
         </div>
 
@@ -138,7 +183,7 @@ const Navbar = () => {
                   type="text" 
                   placeholder="Tìm kiếm sản phẩm..." 
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={handleSearch}
                   autoFocus
                 />
                 
@@ -167,6 +212,34 @@ const Navbar = () => {
               </div>
             )}
           </div>
+
+          <div className="notif-container" ref={notifRef}>
+             <button className="icon-btn notif-btn" onClick={() => setIsNotifOpen(!isNotifOpen)} aria-label="Notifications">
+                <Bell size={22} />
+                {unreadCount > 0 && <span className="notif-badge">{unreadCount}</span>}
+             </button>
+             {isNotifOpen && (
+                <div className="notif-dropdown">
+                   <div className="notif-header">Thông báo</div>
+                   <div className="notif-list">
+                      {notifications.length > 0 ? (
+                        notifications.map(n => (
+                          <div 
+                             key={n.id} 
+                             className={`notif-item ${!n.isRead ? 'unread' : ''}`}
+                             onClick={() => markNotifAsRead(n.id)}
+                          >
+                             <p className="notif-msg">{n.message}</p>
+                             <span className="notif-time">{new Date(n.createdAt).toLocaleString('vi-VN')}</span>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="notif-empty">Không có thông báo mới.</div>
+                      )}
+                   </div>
+                </div>
+             )}
+          </div>
           
           {user ? (
             <div className="user-menu-wrapper" ref={userMenuRef}>
@@ -182,6 +255,35 @@ const Navbar = () => {
               </button>
               {isUserMenuOpen && (
                 <div className="user-dropdown">
+                  {user?.role === 'owner' && (
+                    <button
+                      type="button"
+                      className="user-dropdown-item user-dropdown-owner"
+                      onClick={() => handleNavigateFromMenu('/owner')}
+                      style={{ color: '#fbbf24', fontWeight: 'bold' }}
+                    >
+                      👑 Owner Dashboard
+                    </button>
+                  )}
+                    {user?.role === 'admin' && (
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <button
+                          type="button"
+                          className="user-dropdown-item user-dropdown-admin"
+                          onClick={() => handleNavigateFromMenu('/admin')}
+                        >
+                          🛡️ Admin Dashboard
+                        </button>
+                        <button
+                          type="button"
+                          className="user-dropdown-item"
+                          onClick={() => handleNavigateFromMenu('/admin/chat')}
+                          style={{ color: '#0ea5e9', fontWeight: 'bold' }}
+                        >
+                          💬 Support Chat
+                        </button>
+                      </div>
+                    )}
                   <button
                     type="button"
                     className="user-dropdown-item"
@@ -219,8 +321,13 @@ const Navbar = () => {
             </Link>
           )}
 
-          <Link to="/cart" className="icon-btn cart-btn" aria-label="Cart">
+          <Link to="/orders" className="icon-btn" aria-label="Orders">
+            <ClipboardList size={22} />
+          </Link>
+
+          <Link to="/cart" className="icon-btn cart-btn nav-link" aria-label="Cart" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '600' }}>
             <ShoppingCart size={22} />
+            <span className="cart-text">CART</span>
             <span className="cart-badge">{cartCount}</span>
           </Link>
         </div>

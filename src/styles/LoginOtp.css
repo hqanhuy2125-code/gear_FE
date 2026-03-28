@@ -1,0 +1,51 @@
+.login-method-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.method-tab {
+  padding: 0.75rem 2rem;
+  border: 1px solid var(--border-color);
+  background: var(--bg-light);
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); border-radius: 0;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+}
+
+.method-tab.active {
+  background: var(--primary-color, #4f46e5);
+  color: var(--cy-bg-card);
+  border-color: var(--primary-color, #4f46e5);
+  box-shadow: var(--cy-glow);
+}
+
+.method-tab:hover:not(.active) {
+  background: var(--cy-bg-muted);
+}
+
+.otp-inputs-grid {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+.otp-digit-input {
+  width: 50px !important;
+  height: 60px;
+  text-align: center;
+  font-size: 1.5rem !important;
+  font-weight: 700;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); border-radius: 0;
+  padding: 0 !important;
+}
+
+.otp-digit-input:focus {
+  border-color: var(--primary-color, #4f46e5);
+  box-shadow: var(--cy-glow);
+}

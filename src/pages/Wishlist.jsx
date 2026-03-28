@@ -1,73 +1,76 @@
-import React, { useEffect, useState } from 'react';
-import '../styles/Account.css';
-import { products } from '../data/products';
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 import ProductCard from '../components/ProductCard';
-
-const getInitialWishlistIds = () => {
-  const stored = localStorage.getItem('wishlistProductIds');
-  if (stored) {
-    try {
-      return JSON.parse(stored);
-    } catch {
-      return [];
-    }
-  }
-  // Seed with a few products so page không trống
-  const seeded = products.slice(0, 4).map((p) => p.id);
-  localStorage.setItem('wishlistProductIds', JSON.stringify(seeded));
-  return seeded;
-};
+import api from '../api';
+import '../styles/Wishlist.css';
 
 const Wishlist = () => {
-  const [wishlistIds, setWishlistIds] = useState(getInitialWishlistIds);
+    const { user } = useAuth();
+    const [wishlist, setWishlist] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    localStorage.setItem('wishlistProductIds', JSON.stringify(wishlistIds));
-  }, [wishlistIds]);
+    useEffect(() => {
+        if (user) {
+            fetchWishlist();
+        }
+    }, [user]);
 
-  const wishlistProducts = products.filter((p) =>
-    wishlistIds.includes(p.id),
-  );
+    const fetchWishlist = async () => {
+        try {
+            const { data } = await api.get(`/api/wishlist/${user.id}`);
+            setWishlist(data);
+        } catch (err) {
+            console.error('Wishlist fetch failed:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-  const handleRemove = (id) => {
-    setWishlistIds((prev) => prev.filter((pid) => pid !== id));
-  };
+    if (!user) {
+        return (
+            <div className="wishlist-page">
+                <div className="container">
+                    <div className="wishlist-empty">
+                        <h2>Vui lòng đăng nhập</h2>
+                        <p>Bạn cần đăng nhập để xem danh sách yêu thích của mình.</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
-  return (
-    <div className="container account-page">
-      <div className="account-card">
-        <h1 className="account-title">Danh sách yêu thích</h1>
-
-        {wishlistProducts.length === 0 ? (
-          <p className="account-text">
-            Bạn chưa lưu sản phẩm nào vào wishlist. Hãy khám phá các sản phẩm và lưu lại những món
-            bạn yêu thích.
-          </p>
-        ) : (
-          <div className="wishlist-grid">
-            {wishlistProducts.map((product) => (
-              <div key={product.id} className="wishlist-card-wrapper">
-                <button
-                  type="button"
-                  className="wishlist-remove-btn"
-                  onClick={() => handleRemove(product.id)}
-                >
-                  ✕
-                </button>
-                <ProductCard
-                  id={product.id}
-                  name={product.name}
-                  price={product.price}
-                  image={product.image}
-                />
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
+    return (
+        <div className="wishlist-page">
+            <div className="container">
+                <h1 className="wishlist-title">Danh sách yêu thích của bạn</h1>
+                
+                {loading ? (
+                    <div className="loading">Đang tải...</div>
+                ) : wishlist.length === 0 ? (
+                    <div className="wishlist-empty">
+                        <div className="empty-icon">❤️</div>
+                        <h2>Danh sách trống</h2>
+                        <p>Bạn chưa thêm sản phẩm nào vào mục yêu thích.</p>
+                        <a href="/" className="btn-browse">Tiếp tục mua sắm</a>
+                    </div>
+                ) : (
+                    <div className="wishlist-grid">
+                        {wishlist.map(product => (
+                            <ProductCard 
+                                key={product.id}
+                                id={product.id}
+                                name={product.name}
+                                price={product.price}
+                                image={product.imageUrl}
+                                sale={product.salePrice > 0 && product.salePrice < product.price}
+                                discount={product.salePrice > 0 ? Math.round((1 - product.salePrice / product.price) * 100) : 0}
+                            />
+                        ))}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
 };
 
 export default Wishlist;
-
