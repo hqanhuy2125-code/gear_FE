@@ -1,10 +1,25 @@
 import React from 'react';
 import ProductCard from '../components/ProductCard';
-import { products } from '../data/products';
+import { products as allProducts } from '../data/products';
+import ProductPageAddons from '../components/ProductPageAddons';
 import '../styles/CategoryPage.css';
 
 const Keyboards = () => {
-  const keyboardProducts = products.filter(p => p.category === 'keyboards');
+  const products = allProducts.filter(p => p.category === 'keyboards');
+  const [visibleBlocks, setVisibleBlocks] = React.useState({});
+
+  React.useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && entry.target.classList.contains('animate-on-scroll')) {
+          setVisibleBlocks(prev => ({ ...prev, [entry.target.id]: true }));
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div className="all-products-page cat-keyboards">
@@ -18,7 +33,7 @@ const Keyboards = () => {
       <section className="all-products-content section-white">
         <div className="container">
           <div className="products-grid">
-            {keyboardProducts.map((product) => (
+            {products.map((product) => (
               <ProductCard key={product.id} {...product} />
             ))}
           </div>
@@ -27,10 +42,7 @@ const Keyboards = () => {
 
       <section className="category-info-section section-pastel-blue">
         <div className="container category-info-container">
-          <div className="info-image-side">
-            <img src={keyboardProducts[0]?.image} alt="Keyboards Info" />
-          </div>
-          <div className="info-text-side">
+          <div id="text-1" className={`info-text-side animate-on-scroll slide-left ${visibleBlocks['text-1'] ? 'visible' : ''}`}>
             <h2>Trải nghiệm gõ phím đỉnh cao</h2>
             <p>
               Bàn phím cơ SCYTOL được thiết kế dành riêng cho những game thủ 
@@ -44,15 +56,18 @@ const Keyboards = () => {
               vượt trội qua hàng triệu lần nhấn.
             </p>
           </div>
+          <div id="img-1" className={`info-image-side animate-on-scroll slide-right ${visibleBlocks['img-1'] ? 'visible' : ''}`}>
+            <img src={products[0]?.image} alt="Keyboards Info" />
+          </div>
         </div>
       </section>
 
       <section className="category-info-section section-pastel-purple">
         <div className="container category-info-container">
-          <div className="info-image-side">
+          <div id="img-2" className={`info-image-side animate-on-scroll slide-left ${visibleBlocks['img-2'] ? 'visible' : ''}`}>
             <img src="https://images.unsplash.com/photo-1511467687858-23d96c32e4ae?auto=format&fit=crop&q=80&w=1200" alt="Keyboard Tech" />
           </div>
-          <div className="info-text-side">
+          <div id="text-2" className={`info-text-side animate-on-scroll slide-right ${visibleBlocks['text-2'] ? 'visible' : ''}`}>
             <h2>Kết nối không dây siêu tốc</h2>
             <p>
               Đừng để dây cáp làm phiền bạn. Các sản phẩm bàn phím của chúng tôi 
@@ -66,6 +81,8 @@ const Keyboards = () => {
           </div>
         </div>
       </section>
+
+      <ProductPageAddons category="keyboards" />
     </div>
   );
 };

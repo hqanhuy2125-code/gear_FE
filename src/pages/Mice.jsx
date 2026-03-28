@@ -1,10 +1,25 @@
 import React from 'react';
 import ProductCard from '../components/ProductCard';
-import { products } from '../data/products';
+import { products as allProducts } from '../data/products';
+import ProductPageAddons from '../components/ProductPageAddons';
 import '../styles/CategoryPage.css';
 
 const Mice = () => {
-  const miceProducts = products.filter(p => p.category === 'mice');
+  const products = allProducts.filter(p => p.category === 'mice');
+  const [visibleBlocks, setVisibleBlocks] = React.useState({});
+
+  React.useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && entry.target.classList.contains('animate-on-scroll')) {
+          setVisibleBlocks(prev => ({ ...prev, [entry.target.id]: true }));
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div className="all-products-page cat-mice">
@@ -15,10 +30,10 @@ const Mice = () => {
         </div>
       </header>
 
-      <section className="all-products-content">
+      <section className="all-products-content section-white">
         <div className="container">
           <div className="products-grid">
-            {miceProducts.map((product) => (
+            {products.map((product) => (
               <ProductCard key={product.id} {...product} />
             ))}
           </div>
@@ -27,10 +42,7 @@ const Mice = () => {
 
       <section className="category-info-section section-pastel-beige">
         <div className="container category-info-container">
-          <div className="info-image-side">
-            <img src={miceProducts[0]?.image} alt="Mice Info" />
-          </div>
-          <div className="info-text-side">
+          <div id="text-1" className={`info-text-side animate-on-scroll slide-left ${visibleBlocks['text-1'] ? 'visible' : ''}`}>
             <h2>Cảm biến quang học 26K đỉnh cao</h2>
             <p>
               Chuột gaming SCYTOL sở hữu cảm biến quang học tiên tiến nhất thế giới, 
@@ -43,15 +55,18 @@ const Mice = () => {
               kéo dài, cho phép bạn duy trì phong độ đỉnh cao lâu hơn.
             </p>
           </div>
+          <div id="img-1" className={`info-image-side animate-on-scroll slide-right ${visibleBlocks['img-1'] ? 'visible' : ''}`}>
+            <img src={products[0]?.image} alt="Mice Info" />
+          </div>
         </div>
       </section>
 
       <section className="category-info-section section-pastel-blue">
         <div className="container category-info-container">
-          <div className="info-image-side">
+          <div id="img-2" className={`info-image-side animate-on-scroll slide-left ${visibleBlocks['img-2'] ? 'visible' : ''}`}>
             <img src="https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format&fit=crop&q=80&w=1200" alt="Mouse Tech" />
           </div>
-          <div className="info-text-side">
+          <div id="text-2" className={`info-text-side animate-on-scroll slide-right ${visibleBlocks['text-2'] ? 'visible' : ''}`}>
             <h2>Trọng lượng siêu nhẹ, tốc độ siêu nhanh</h2>
             <p>
               Chúng tôi hiểu rằng trong thi đấu, tốc độ là tất cả. Với việc sử dụng 
@@ -66,6 +81,8 @@ const Mice = () => {
           </div>
         </div>
       </section>
+
+      <ProductPageAddons category="mice" />
     </div>
   );
 };

@@ -1,62 +1,141 @@
-/* Toast Container */
-.toast-container {
+/* Detailed Cart Modal */
+.cart-modal-overlay {
   position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  pointer-events: none;
-}
-
-/* Individual Toast */
-.toast {
-  background-color: #ffffff;
-  color: #333333;
-  padding: 16px 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 0.95rem;
-  font-weight: 500;
-  pointer-events: auto;
-  border-left: 4px solid #10b981; /* Green success indicator */
-  
-  /* Initial state for animation */
-  opacity: 0;
-  transform: translateX(100%);
-  animation: slideInFade 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.3s ease;
 }
 
-.toast.hiding {
-  animation: slideOutFade 0.3s ease-in forwards;
+.cart-modal-overlay.hiding {
+  animation: fadeOut 0.3s ease forwards;
 }
 
-.toast-icon {
+.cart-modal-content {
+  background: var(--cy-bg-card);
+  width: 90%;
+  max-width: 450px;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); border-radius: 0;
+  overflow: hidden;
+  box-shadow: var(--cy-glow);
+  animation: modalSlideIn 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.cart-modal-content.hiding {
+  animation: modalSlideOut 0.3s ease forwards;
+}
+
+.cart-modal-header {
+  padding: 16px 20px;
+  background: var(--cy-bg-muted);
+  border-bottom: 1px solid var(--cy-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cart-modal-header h3 {
+  margin: 0;
   font-size: 1.1rem;
+  color: var(--cy-text);
 }
 
-@keyframes slideInFade {
-  from {
-    opacity: 0;
-    transform: translateX(100%);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+.close-modal-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--cy-text-dim);
+  cursor: pointer;
 }
 
-@keyframes slideOutFade {
-  from {
-    opacity: 1;
-    transform: translateX(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateX(100%);
-  }
+.cart-modal-body {
+  padding: 24px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.cm-img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  background: var(--cy-bg-muted);
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); border-radius: 0;
+  padding: 10px;
+}
+
+.cm-info h4 {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+  color: var(--cy-text);
+}
+
+.cm-price {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #ef4444;
+  margin: 0 0 4px;
+}
+
+.cm-stock {
+  font-size: 0.9rem;
+  color: var(--cy-text-dim);
+  margin: 0;
+}
+
+.cart-modal-footer {
+  padding: 16px 20px;
+  background: var(--cy-bg-muted);
+  display: flex;
+  gap: 12px;
+}
+
+.btn-continue, .btn-view-cart {
+  flex: 1;
+  padding: 12px;
+  text-align: center;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); border-radius: 0;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-continue {
+  background: var(--cy-bg-card);
+  color: var(--cy-text);
+  border: 1px solid var(--cy-border);
+}
+
+.btn-continue:hover {
+  background: var(--cy-bg-muted);
+}
+
+.btn-view-cart {
+  background: var(--cy-text);
+  color: var(--cy-bg-card);
+  border: none;
+}
+
+.btn-view-cart:hover {
+  background: var(--cy-text);
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+
+@keyframes modalSlideIn {
+  from { opacity: 0; transform: translateY(30px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes modalSlideOut {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to { opacity: 0; transform: translateY(-20px) scale(0.95); }
 }

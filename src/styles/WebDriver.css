@@ -4,7 +4,7 @@
 
 .driver-header {
   padding: 100px 0 64px;
-  background: linear-gradient(180deg, #6366f1 0%, #a5b4fc 60%, #ffffff 100%);
+  background: linear-gradient(180deg, #6366f1 0%, #a5b4fc 60%, var(--cy-bg-card) 100%);
   text-align: center;
   border-bottom: 1px solid var(--border-color);
   margin-bottom: 60px;
@@ -14,7 +14,7 @@
 
 .driver-info-section {
   padding: var(--section-padding) 0;
-  background: linear-gradient(180deg, #6366f1 0%, #a5b4fc 60%, #ffffff 100%);
+  background: linear-gradient(180deg, #6366f1 0%, #a5b4fc 60%, var(--cy-bg-card) 100%);
 }
 
 .driver-header::before {
@@ -42,7 +42,7 @@
   height: 4px;
   background-color: #6366f1;
   margin: 0 auto 2rem auto;
-  border-radius: 2px;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); border-radius: 0;
 }
 
 .driver-subtitle {
@@ -64,19 +64,19 @@
 }
 
 .driver-card {
-  background: white;
-  border-radius: 20px;
+  background: var(--cy-bg-card);
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); border-radius: 0;
   padding: 32px;
   border: 1.5px solid var(--border-color);
   transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
   display: flex;
   flex-direction: column;
-  box-shadow: 0 8px 32px rgba(99, 102, 241, 0.06);
+  box-shadow: var(--cy-glow);
 }
 
 .driver-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 24px 48px rgba(99, 102, 241, 0.12);
+  box-shadow: var(--cy-glow);
   border-color: #6366f1;
 }
 
@@ -91,7 +91,7 @@
   width: 56px;
   height: 56px;
   background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
-  border-radius: 14px;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -117,7 +117,7 @@
   padding: 4px 12px;
   background-color: #e0e7ff;
   color: #6366f1;
-  border-radius: 100px;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); border-radius: 0;
   font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -148,9 +148,9 @@
   gap: 12px;
   padding: 14px;
   background: linear-gradient(135deg, #4f46e5, #6366f1);
-  color: white;
+  color: var(--cy-bg-card);
   border: none;
-  border-radius: 12px;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); border-radius: 0;
   font-weight: 700;
   font-size: 0.95rem;
   cursor: pointer;
@@ -160,12 +160,12 @@
 .download-cta:hover {
   background: linear-gradient(135deg, #4338ca, #4f46e5);
   transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+  box-shadow: var(--cy-glow);
 }
 
 .driver-info-section {
   padding: var(--section-padding) 0;
-  background: linear-gradient(160deg, #e0e7ff 0%, #ffffff 100%);
+  background: linear-gradient(160deg, #e0e7ff 0%, var(--cy-bg-card) 100%);
 }
 
 .driver-info-container {
@@ -181,8 +181,8 @@
 .driver-info-image img {
   width: 100%;
   max-width: 500px;
-  border-radius: 24px;
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.08);
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); border-radius: 0;
+  box-shadow: var(--cy-glow);
   display: block;
   margin: 0 auto;
 }

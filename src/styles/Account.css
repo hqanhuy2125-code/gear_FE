@@ -3,9 +3,9 @@
 }
 
 .account-card {
-  background-color: #ffffff;
-  border-radius: 24px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.04);
+  background-color: var(--cy-bg-card);
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); border-radius: 0;
+  box-shadow: var(--cy-glow);
   padding: 3.5rem;
   border: 1px solid var(--border-color);
   max-width: 900px;
@@ -33,12 +33,12 @@
 .account-avatar-circle {
   width: 100px;
   height: 100px;
-  border-radius: 100px;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); border-radius: 0;
   background: linear-gradient(135deg, var(--clr-txt), var(--clr-accent));
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: var(--cy-bg-card);
   font-size: 2.5rem;
   font-weight: 800;
   box-shadow: 0 15px 30px var(--clr-accent-glow);
@@ -66,7 +66,7 @@
 
 .account-form-group input,
 .account-form-group textarea {
-  border-radius: 12px;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); border-radius: 0;
   border: 1px solid var(--border-color);
   padding: 1rem 1.25rem;
   font-size: 1rem;
@@ -78,8 +78,8 @@
 .account-form-group input:focus {
   outline: none;
   border-color: var(--primary-color);
-  background-color: #fff;
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+  background-color: var(--cy-bg-card);
+  box-shadow: var(--cy-glow);
 }
 
 .account-actions {
@@ -92,7 +92,7 @@
 
 .account-btn {
   padding: 1rem 2.5rem;
-  border-radius: 100px;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); border-radius: 0;
   font-weight: 700;
   font-size: 1rem;
   cursor: pointer;
@@ -101,7 +101,7 @@
 
 .account-btn.primary {
   background-color: var(--text-main);
-  color: #fff;
+  color: var(--cy-bg-card);
   border: none;
 }
 
@@ -123,7 +123,7 @@
 /* Responsive Table */
 .orders-table-wrapper {
   margin-top: 2rem;
-  border-radius: 16px;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); border-radius: 0;
   border: 1px solid var(--border-color);
   overflow: hidden;
 }

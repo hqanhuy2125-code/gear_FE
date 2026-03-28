@@ -1,5 +1,5 @@
-import React from 'react';
 import { Facebook, Twitter, Instagram, Youtube, Linkedin } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import '../styles/Footer.css';
 
 const Footer = () => {
@@ -11,48 +11,49 @@ const Footer = () => {
           <div className="footer-col footer-brand">
             <h3 className="footer-brand-title">SCYTOL CLX21</h3>
             <p className="footer-text">
-              We're on a mission to redefine the way young individuals interact with technology. 
-              Our accessories are designed to enhance performance and reflect your unique personality.
+              Chúng tôi mang đến gaming gear đỉnh cao — nơi tốc độ, độ chính xác và phong cách hội tụ. 
+              Nâng cấp setup của bạn cùng SCYTOL CLX21.
             </p>
             <p className="footer-text footer-email">
               Email: <a href="mailto:support@scytol.com">support@scytol.com</a>
             </p>
           </div>
 
-          {/* Column 2: Company */}
+          {/* Cột 2: Công ty */}
           <div className="footer-col">
-            <h4 className="footer-heading">Company</h4>
+            <h4 className="footer-heading">Công ty</h4>
             <ul className="footer-links">
-              <li><a href="#about">About Us</a></li>
-              <li><a href="#contact">Contact Us</a></li>
-              <li><a href="#buy">Where to Buy</a></li>
-              <li><a href="#join">Join Us</a></li>
-              <li><a href="#affiliates">Affiliates</a></li>
-              <li><a href="#distributor">Become a Distributor</a></li>
+              <li><Link to="/about">Về chúng tôi</Link></li>
+              <li><Link to="/contact">Liên hệ</Link></li>
+              <li><Link to="/where-to-buy">Hệ thống cửa hàng</Link></li>
+              <li><Link to="/join-us">Tuyển dụng</Link></li>
+              <li><Link to="/affiliates">Đối tác</Link></li>
+              <li><Link to="/distributor">Trở thành nhà phân phối</Link></li>
             </ul>
           </div>
 
-          {/* Column 3: Support */}
+          {/* Cột 3: Hỗ trợ */}
           <div className="footer-col">
-            <h4 className="footer-heading">Support</h4>
+            <h4 className="footer-heading">Hỗ trợ</h4>
             <ul className="footer-links">
-              <li><a href="#manual">User Manual</a></li>
-              <li><a href="#tracking">Order Tracking</a></li>
-              <li><a href="#privacy">Privacy Policy</a></li>
-              <li><a href="#return">Return Policy</a></li>
-              <li><a href="#shipping">Shipping Policy</a></li>
-              <li><a href="#terms">Terms Of Service</a></li>
+              <li><Link to="/user-manual">Hướng dẫn sử dụng</Link></li>
+              <li><Link to="/orders">Theo dõi đơn hàng</Link></li>
+              <li><Link to="/privacy-policy">Chính sách bảo mật</Link></li>
+              <li><Link to="/return-policy">Chính sách đổi trả</Link></li>
+              <li><Link to="/shipping-policy">Chính sách vận chuyển</Link></li>
+              <li><Link to="/terms-of-service">Điều khoản dịch vụ</Link></li>
+              <li><Link to="/security">Bảo mật hệ thống</Link></li>
             </ul>
           </div>
 
-          {/* Column 4: Newsletter */}
+          {/* Cột 4: Newsletter */}
           <div className="footer-col footer-newsletter">
-            <h4 className="footer-heading newsletter-title">Sign up for new stories and personal offers</h4>
+            <h4 className="footer-heading newsletter-title">ĐĂNG KÝ ƯU ĐÃI VIP</h4>
             <p className="footer-text">
-              Want to get that exclusive VIP treatment?
+              Nhận ngay ưu đãi độc quyền dành cho thành viên SCYTOL!
             </p>
             <form className="footer-newsletter-form" onSubmit={(e) => e.preventDefault()}>
-              <input type="email" placeholder="E-mail" className="footer-input" />
+              <input type="email" placeholder="Nhập email của bạn" className="footer-input" />
               <button type="submit" className="footer-submit-btn">
                 →
               </button>
@@ -76,7 +77,7 @@ const Footer = () => {
 
             {/* Copyright */}
             <p className="footer-copy">
-              © 2026, SCYTOL CLX21 Official. Powered by Antigravity.
+              © 2026, SCYTOL CLX21. Bản quyền thuộc về SCYTOL CLX21.
             </p>
 
             {/* Payment Icons */}

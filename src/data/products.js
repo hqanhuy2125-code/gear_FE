@@ -63,6 +63,10 @@ export const products = Object.keys(imageModules).map((path, index) => {
     image: imageUrl,
     category,
     sale: isSale,
-    discount: discount
+    discount: discount,
+    stock: (index % 5 === 0) ? 0 : (index % 10 === 0) ? 5 : 50, // Some out of stock, some low stock
+    isPreOrder: (index === 2), // Product 3 is pre-order
+    preOrderDate: (index === 2) ? "2026-04-20" : null,
+    isOrderOnly: (index === 4) // Product 5 is order-only
   };
 });

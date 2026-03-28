@@ -1,74 +1,56 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 /* =============================================
-   SCYTOL — Global Design Tokens (Light Theme)
-   Inspired by Madlions layout, pastel palette
+   SCYTOL — Global Cyberpunk Design System
    ============================================= */
 
 :root {
-  /* Brand palette */
-  --clr-accent:       #e8572a;     /* warm coral-orange (primary CTA) */
-  --clr-accent-light: #ff7a4d;
-  --clr-accent-dim:   rgba(232,87,42,0.12);
-  --clr-accent-glow:  rgba(232,87,42,0.28);
+  /* Cyberpunk Base Palette */
+  --cy-bg:              #0a0a0f;
+  --cy-bg-card:         #12121a;
+  --cy-bg-muted:        #1c1c2e;
+  --cy-border:          #2a2a3a;
+  
+  --cy-accent:          #00ff88;
+  --cy-accent2:         #ff00ff;
+  --cy-accent3:         #00d4ff;
+  --cy-accent-dim:      rgba(0, 255, 136, 0.15);
+  
+  --cy-text:            #e0e0e0;
+  --cy-text-dim:        #6b7280;
 
-  /* == THEME / CONTEXT VARIABLES ==
-     Default to main brand tokens, but can be overridden
-     by category container classes (e.g. .cat-keyboards) */
-  --theme-accent:      var(--clr-accent);
-  --theme-accent-dim:  var(--clr-accent-dim);
-  --theme-accent-glow: var(--clr-accent-glow);
-  --theme-bg:          var(--clr-bg);
-  --theme-bg-alt:      var(--clr-bg-alt);
-  --theme-bg-light:    var(--clr-border-light);
+  --cy-glow:            0 0 5px var(--cy-accent), 0 0 10px rgba(0, 255, 136, 0.25);
+  --cy-glow-focus:      0 0 8px var(--cy-accent), 0 0 15px rgba(0, 255, 136, 0.4);
 
+  /* Legacy variable overrides to instantly dark-mode legacy components */
+  --clr-bg:             var(--cy-bg);
+  --clr-bg-alt:         var(--cy-bg-muted);
+  --clr-bg-card:        var(--cy-bg-card);
+  --clr-bg-hero:        var(--cy-bg);
+  --clr-txt:            var(--cy-text);
+  --clr-txt-2:          var(--cy-text);
+  --clr-txt-3:          var(--cy-text-dim);
+  --clr-border:         var(--cy-border);
+  --clr-border-light:   var(--cy-border);
 
-  /* Light background layers */
-  --clr-bg:           #fafbfc;     /* page root */
-  --clr-bg-alt:       #f3f5f7;     /* alternating section */
-  --clr-bg-card:      #ffffff;
-  --clr-bg-hero:      #f0f4f8;
-
-  /* Text */
-  --clr-txt:          #0f1117;
-  --clr-txt-2:        #3d4250;
-  --clr-txt-3:        #8892a4;
-
-  /* Borders */
-  --clr-border:       #e4e8ef;
-  --clr-border-light: #f0f2f5;
-
-  /* Category badge colours */
-  --clr-blue:         #2563eb;
-  --clr-purple:       #7c3aed;
-  --clr-green:        #16a34a;
+  --clr-accent:         var(--cy-accent);
+  --primary-color:      var(--cy-accent);
+  --border-color:       var(--cy-border);
+  --bg-alternate:       var(--cy-bg-muted);
+  --text-light:         var(--cy-text-dim);
+  --text-muted:         var(--cy-text-dim);
+  --text-main:          var(--cy-text);
+  --bg-light:           var(--cy-bg-muted);
 
   /* Spacing */
-  --max-w:            1260px;
-  --pad-x:            60px;
-  --radius:           14px;
-
-  /* Typography */
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  color-scheme: light;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
+  --max-w:              1260px;
+  --pad-x:              60px;
+  --radius:             0px; /* Cyberpunk uses chamfers */
 }
 
-/* Legacy var aliases used by older components */
-:root {
-  --primary-color:    var(--clr-accent);
-  --border-color:     var(--clr-border);
-  --bg-alternate:     var(--clr-bg-alt);
-  --text-light:       var(--clr-txt-3);
-  --text-muted:       var(--clr-txt-3);
-  --text-main:        var(--clr-txt);
-  --bg-light:         var(--clr-bg-alt);
-}
-
+/* =============================================
+   Reset & Global Setup
+   ============================================= */
 *,
 *::before,
 *::after {
@@ -80,29 +62,125 @@
 html { scroll-behavior: smooth; }
 
 body {
-  background-color: var(--clr-bg);
-  color: var(--clr-txt);
+  background-color: var(--cy-bg);
+  color: var(--cy-text);
   min-height: 100vh;
+  font-family: 'JetBrains Mono', monospace;
+  position: relative;
+}
+
+/* GLOBAL SCANLINE REMOVED - NOW LOCAL TO HOME */
+
+/* Typography globals */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Orbitron', sans-serif;
+  color: var(--cy-text);
+  letter-spacing: 0.05em;
 }
 
 img { max-width: 100%; display: block; }
-a   { color: inherit; }
-button { font-family: inherit; }
+a { color: var(--cy-accent); text-decoration: none; transition: all 0.2s; }
+a:hover { text-shadow: var(--cy-glow); }
 
-/* Utility: full-width section container */
+/* =============================================
+   Global Cyberpunk UI Elements
+   ============================================= */
+
+/* Buttons */
+button, .btn {
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+  background: var(--cy-bg-muted);
+  color: var(--cy-accent);
+  border: 1px solid var(--cy-accent);
+  padding: 10px 20px;
+  cursor: pointer;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+  transition: all 0.3s ease;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+button:hover, .btn:hover {
+  background: var(--cy-accent);
+  color: var(--cy-bg);
+  box-shadow: var(--cy-glow);
+}
+
+button:disabled {
+  border-color: var(--cy-border);
+  color: var(--cy-text-dim);
+  background: var(--cy-bg);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Primary Button Modifier */
+.btn-primary {
+  background: var(--cy-accent);
+  color: var(--cy-bg);
+  box-shadow: var(--cy-glow);
+}
+.btn-primary:hover {
+  background: #00cc6a;
+}
+
+/* Inputs, Textareas, Selects */
+input, textarea, select {
+  font-family: 'JetBrains Mono', monospace;
+  background: var(--cy-bg-card);
+  border: 1px solid var(--cy-border);
+  color: var(--cy-text);
+  padding: 12px 16px;
+  outline: none;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--cy-accent);
+  box-shadow: var(--cy-glow-focus);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--cy-text-dim);
+  opacity: 0.7;
+}
+
+/* Fake terminal prefix for inputs natively */
+/* CSS doesn't allow real pseudo-elements on inputs, so we simulate placeholder styling */
+input[type="text"]::placeholder, 
+input[type="password"]::placeholder, 
+input[type="email"]::placeholder {
+  content: "> " attr(placeholder);
+}
+
+/* Add prefix to text inputs inside forms */
+input[type="text"]:not([placeholder])::before { content: "> "; color: var(--cy-accent); }
+
+/* Global Cards */
+.card, .cyber-card {
+  background: var(--cy-bg-card);
+  border: 1px solid var(--cy-border);
+  clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+  padding: 24px;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.card:hover, .cyber-card:hover {
+  border-color: var(--cy-accent);
+  box-shadow: var(--cy-glow);
+}
+
+/* Utility layout */
 .container {
   max-width: var(--max-w);
   margin-inline: auto;
   padding-inline: var(--pad-x);
 }
-
-/* Section white wash */
-.section-white { background: #ffffff; }
-
-/* =========================================
-   PASTEL SECTION BLOCKS
-   ========================================= */
-.section-pastel-blue { background: #eef4ff; }
-.section-pastel-beige { background: #f6efe9; }
-.section-pastel-purple { background: #f3efff; }
-.section-pastel-green { background: #f0fbf4; }

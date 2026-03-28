@@ -1,5 +1,5 @@
 .cat-keyboards {
-  --theme-accent: #3b82f6;
+  --theme-accent: var(--cy-accent);
   --theme-accent-glow: rgba(59, 130, 246, 0.25);
   --pastel-1: #70acf5;
   --pastel-2: #e0f2fe;
@@ -55,7 +55,7 @@
 }
 
 .sale-theme .all-products-header {
-  background: linear-gradient(135deg, #dc2626 0%, #f87171 40%, #ffffff 100%);
+  background: linear-gradient(135deg, #dc2626 0%, #f87171 40%, var(--cy-bg-card) 100%);
   overflow: visible;
   padding-top: 80px;
 }
@@ -78,13 +78,13 @@
 }
 
 .all-products-page {
-  background: #ffffff;
+  background: var(--cy-bg-card);
   min-height: 100vh;
 }
 
 .all-products-header {
   padding: 110px 0 64px;
-  background: linear-gradient(160deg, var(--pastel-1) 0%, #ffffff 100%);
+  background: linear-gradient(160deg, var(--pastel-1) 0%, var(--cy-bg-card) 100%);
   text-align: center;
   border-bottom: 1px solid var(--clr-border);
   position: relative;
@@ -129,7 +129,7 @@
 
 .all-products-content {
   padding: 64px 0;
-  background: #ffffff;
+  background: var(--cy-bg-card);
 }
 
 .products-grid {
@@ -139,8 +139,9 @@
 }
 
 .category-info-section {
-  padding: 40px 0;
-  background: #ffffff;
+  padding: 80px 0;
+  background: var(--cy-bg-card);
+  overflow: hidden;
 }
 
 .category-info-container {
@@ -150,47 +151,63 @@
   flex-wrap: wrap;
 }
 
-.category-info-section:nth-of-type(even) .category-info-container {
-  flex-direction: row-reverse;
+/* Base animation states */
+.animate-on-scroll {
+  opacity: 0;
+  transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.slide-left { transform: translateX(-60px); }
+.slide-right { transform: translateX(60px); }
+
+.animate-on-scroll.visible {
+  opacity: 1;
+  transform: translate(0) !important;
 }
 
 .info-image-side,
 .info-text-side {
   flex: 1;
-  min-width: 280px;
+  min-width: 320px;
 }
 
 .info-image-side img {
   width: 100%;
-  max-width: 480px;
-  border-radius: 20px;
-  box-shadow: 0 24px 56px rgba(0,0,0,0.07);
+  max-width: 520px;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); border-radius: 0;
+  box-shadow: var(--cy-glow);
   display: block;
   margin: 0 auto;
   border: 1.5px solid var(--clr-border);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.info-image-side img:hover {
+  transform: scale(1.03);
+  box-shadow: var(--cy-glow);
 }
 
 .info-text-side {
-  padding: 48px;
+  padding: 56px;
   background: linear-gradient(135deg, var(--pastel-1), var(--pastel-2));
-  border-radius: 20px;
-  box-shadow: 0 8px 28px rgba(0,0,0,0.03);
-  border: 1.5px solid rgba(255,255,255,0.8);
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); border-radius: 0;
+  box-shadow: var(--cy-glow);
+  border: 1.5px solid rgba(255,255,255,0.7);
 }
 
 .info-text-side h2 {
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 900;
   color: var(--theme-accent);
   letter-spacing: -0.03em;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .info-text-side p {
-  font-size: 15px;
-  line-height: 1.75;
+  font-size: 16px;
+  line-height: 1.8;
   color: var(--clr-txt-2);
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 
 .info-text-side p:last-child { margin-bottom: 0; }
@@ -198,7 +215,7 @@
 .flash-sale-banner {
   width: 100%;
   background: linear-gradient(90deg, #dc2626 0%, #ea580c 100%);
-  color: #fff;
+  color: var(--cy-bg-card);
   padding: 14px 24px;
   display: flex;
   align-items: center;
@@ -226,7 +243,7 @@
   flex-shrink: 0;
 }
 
-.flash-sale-banner button:hover { color: #fff; }
+.flash-sale-banner button:hover { color: var(--cy-bg-card); }
 
 @keyframes slideDownFadeBanner {
   from { opacity: 0; transform: translateY(-100%); }
@@ -261,13 +278,13 @@
   top: 90px;
   right: 24px;
   background: linear-gradient(135deg, #dc2626 0%, #ea580c 100%);
-  color: #fff;
+  color: var(--cy-bg-card);
   padding: 16px 20px;
-  border-radius: 14px;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); border-radius: 0;
   display: flex;
   align-items: center;
   gap: 14px;
-  box-shadow: 0 8px 32px rgba(220, 38, 38, 0.4);
+  box-shadow: var(--cy-glow);
   z-index: 9999;
   max-width: 360px;
   animation: toastSlideIn 0.4s cubic-bezier(0.23,1,0.32,1);
@@ -292,7 +309,7 @@
 .toast-text strong {
   font-size: 14px;
   font-weight: 800;
-  color: #fff;
+  color: var(--cy-bg-card);
 }
 
 .toast-text span {
@@ -311,7 +328,7 @@
   flex-shrink: 0;
 }
 
-.sale-welcome-toast button:hover { color: #fff; }
+.sale-welcome-toast button:hover { color: var(--cy-bg-card); }
 
 @keyframes toastSlideIn {
   from { opacity: 0; transform: translateX(100px); }

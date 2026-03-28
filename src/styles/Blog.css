@@ -1,6 +1,6 @@
 .blog-header {
   padding: 110px 0 64px;
-  background: linear-gradient(180deg, #f59e0b 0%, #fcd34d 50%, #ffffff 100%);
+  background: linear-gradient(180deg, #f59e0b 0%, #fcd34d 50%, var(--cy-bg-card) 100%);
   text-align: center;
   border-bottom: 1px solid var(--clr-border);
   position: relative;
@@ -11,7 +11,7 @@
   margin-top: 120px;
   padding: 80px 0;
   border-top: 1px solid var(--border-color);
-  background: linear-gradient(180deg, #fef3c7 0%, #ffffff 100%);
+  background: linear-gradient(180deg, #fef3c7 0%, var(--cy-bg-card) 100%);
 }
 
 .blog-header::before {
@@ -37,7 +37,7 @@
   height: 4px;
   background: var(--primary-color);
   margin: 0 auto 24px auto;
-  border-radius: 2px;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); border-radius: 0;
 }
 
 .blog-subtitle {
@@ -53,8 +53,8 @@
 }
 
 .blog-card {
-  background: #ffffff;
-  border-radius: 16px;
+  background: var(--cy-bg-card);
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); border-radius: 0;
   overflow: hidden;
   border: 1.5px solid var(--clr-border);
   transition: transform 0.28s, box-shadow 0.28s, border-color 0.28s;
@@ -65,7 +65,7 @@
 
 .blog-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 18px 40px rgba(0,0,0,0.07);
+  box-shadow: var(--cy-glow);
   border-color: var(--clr-accent);
 }
 
@@ -93,7 +93,7 @@
   left: 1rem;
   background-color: rgba(255, 255, 255, 0.9);
   padding: 0.4rem 0.8rem;
-  border-radius: 6px;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); border-radius: 0;
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--text-main);
@@ -156,7 +156,7 @@
 .blog-info-image img {
   width: 100%;
   height: auto;
-  border-radius: 24px;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); border-radius: 0;
 }
 
 .blog-info-text {

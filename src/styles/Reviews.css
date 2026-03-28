@@ -1,0 +1,213 @@
+.reviews-page {
+  padding-bottom: 80px;
+  background: var(--cy-bg-muted);
+  min-height: 100vh;
+}
+
+.reviews-header {
+  background: linear-gradient(135deg, var(--cy-text) 0%, var(--cy-text) 100%);
+  color: var(--cy-bg-card);
+  padding: 80px 0;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.reviews-header h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 16px;
+  background: linear-gradient(to right, var(--cy-bg-card), #94a3b8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.reviews-header p {
+  font-size: 1.1rem;
+  opacity: 0.8;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.reviews-filters-bar {
+  background: var(--cy-bg-card);
+  padding: 24px;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); border-radius: 0;
+  box-shadow: var(--cy-glow);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  margin-bottom: 40px;
+  align-items: center;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.filter-group label {
+  font-weight: 600;
+  color: var(--cy-text-dim);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.filter-group select {
+  padding: 10px 16px;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); border-radius: 0;
+  border: 1px solid var(--cy-border);
+  background: var(--cy-bg-muted);
+  font-weight: 500;
+  color: var(--cy-text);
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.filter-group select:focus {
+  border-color: var(--cy-accent);
+  box-shadow: var(--cy-glow);
+}
+
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 24px;
+}
+
+.review-card-shared {
+  background: var(--cy-bg-card);
+  padding: 24px;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); border-radius: 0;
+  box-shadow: var(--cy-glow);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.review-card-shared:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--cy-glow);
+}
+
+.rc-user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.rc-avatar {
+  width: 44px;
+  height: 44px;
+  background: var(--cy-accent);
+  color: var(--cy-bg-card);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.2rem;
+  box-shadow: var(--cy-glow);
+}
+
+.rc-meta {
+  display: flex;
+  flex-direction: column;
+}
+
+.rc-name {
+  font-weight: 700;
+  color: var(--cy-text);
+}
+
+.rc-date {
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+.rc-rating {
+  margin-bottom: 12px;
+}
+
+.rc-comment {
+  font-size: 1rem;
+  color: var(--cy-text-dim);
+  line-height: 1.6;
+  margin-bottom: 20px;
+  height: 4.8em;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.rc-product-ref {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--cy-border);
+}
+
+.rc-product-ref img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  background: var(--cy-bg-muted);
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.rc-p-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.rc-label {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.rc-p-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--cy-text);
+}
+
+.reviews-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px;
+  color: #94a3b8;
+  background: var(--cy-bg-card);
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); border-radius: 0;
+}
+
+.reviews-loading {
+  text-align: center;
+  padding: 100px;
+  font-size: 1.2rem;
+  color: var(--cy-text-dim);
+}
+
+@media (max-width: 768px) {
+  .reviews-filters-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+  
+  .reviews-header h1 {
+    font-size: 2.2rem;
+  }
+  
+  .reviews-grid {
+    grid-template-columns: 1fr;
+  }
+}

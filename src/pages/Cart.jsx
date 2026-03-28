@@ -59,6 +59,30 @@ const Cart = () => {
         )}
         <h1 className="cart-title">GIỎ HÀNG</h1>
 
+        {/* PROMOTION PROGRESS BAR */}
+        <div className="cart-promo-section">
+          {cartTotal >= 5000000 ? (
+            <div className="promo-unlocked">
+              <span className="promo-icon">🎊</span>
+              <div className="promo-info">
+                <strong>Chúc mừng! Bạn đã được giảm 20%</strong>
+                <p>Mức giảm tối đa 2.000.000₫ đã được áp dụng tự động.</p>
+              </div>
+            </div>
+          ) : (
+            <div className="promo-progress-wrap">
+              <div className="promo-header">
+                <span>Còn <strong>{(5000000 - cartTotal).toLocaleString('vi-VN')}₫</strong> nữa để nhận ưu đãi 20%</span>
+                <span className="promo-percent">{Math.round((cartTotal / 5000000) * 100)}%</span>
+              </div>
+              <div className="promo-bar-bg">
+                <div className="promo-bar-fill" style={{ width: `${Math.min(100, (cartTotal / 5000000) * 100)}%` }}></div>
+              </div>
+              <p className="promo-hint">Đơn từ 5.000.000₫ giảm ngay 20% (tối đa 2M)</p>
+            </div>
+          )}
+        </div>
+
         <div className="cart-content">
           <div className="cart-items-list">
             <div className="cart-header">
@@ -100,9 +124,15 @@ const Cart = () => {
               <span>Phí giao hàng</span>
               <span>Tính khi thanh toán</span>
             </div>
+            {cartTotal >= 5000000 && (
+              <div className="summary-row promo-discount">
+                <span>Ưu đãi (20%)</span>
+                <span>-{Math.min(2000000, cartTotal * 0.2).toLocaleString('vi-VN')} ₫</span>
+              </div>
+            )}
             <div className="summary-total">
               <span>Tổng tiền</span>
-              <span>{cartTotal.toLocaleString('vi-VN')} ₫</span>
+              <span>{(cartTotal - (cartTotal >= 5000000 ? Math.min(2000000, cartTotal * 0.2) : 0)).toLocaleString('vi-VN')} ₫</span>
             </div>
             <Link to="/checkout" className="checkout-btn">THANH TOÁN</Link>
             <Link to="/" className="continue-btn">Tiếp tục mua hàng</Link>
