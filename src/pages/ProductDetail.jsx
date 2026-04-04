@@ -2,7 +2,6 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { CartContext } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
-import { products } from '../data/products';
 import { Star, StarHalf, Trash2, ArrowLeft } from 'lucide-react';
 import '../styles/ProductDetail.css';
 
@@ -14,7 +13,7 @@ const ProductDetail = () => {
   const { addToCart } = useContext(CartContext);
   const { user } = useAuth();
   
-  const product = products.find(p => p.id === parseInt(id));
+  const [product, setProduct] = useState(null);
   
   const [reviews, setReviews] = useState([]);
   const [rating, setRating] = useState(5);
@@ -22,6 +21,13 @@ const ProductDetail = () => {
   const [error, setError] = useState('');
   const [msg, setMsg] = useState('');
   const [hasPurchased, setHasPurchased] = useState(false);
+
+  useEffect(() => {
+    fetch(`${API_BASE}/api/products/${id}`)
+      .then(r => r.json())
+      .then(d => setProduct({ ...d, image: d.imageUrl }))
+      .catch(e => console.error(e));
+  }, [id]);
 
   useEffect(() => {
     if (product) {

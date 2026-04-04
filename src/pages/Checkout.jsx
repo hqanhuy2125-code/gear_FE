@@ -74,6 +74,7 @@ const Checkout = () => {
   const [checkoutStep, setCheckoutStep] = useState(1);
   const [selectedMethod, setSelectedMethod] = useState(null);
   const [pendingOrderId, setPendingOrderId] = useState(null);
+  const [pendingOrderCode, setPendingOrderCode] = useState(null);
   const [qrData, setQrData] = useState(null); // String for react-qr-code, or 'VIETQR' indicator
   const [isQrLoading, setIsQrLoading] = useState(false);
 
@@ -88,7 +89,7 @@ const Checkout = () => {
   const handleApplyVoucher = async () => {
     if (!voucherCode) return;
     try {
-      const { data } = await api.post('/api/vouchers/apply', { code: voucherCode });
+      const { data } = await api.post('/api/vouchers/apply', { code: voucherCode, totalAmount: cartTotal });
       setAppliedVoucher(data);
       let disc = 0;
       if (data.type === 'percent') {
@@ -160,13 +161,18 @@ const Checkout = () => {
       } else {
         // ONLINE
         let orderId = pendingOrderId;
+        let orderCode = pendingOrderCode;
         if (!orderId) {
           const order = await createOrderOnBackend('Chuyển khoản QR');
           orderId = order.id;
+          orderCode = order.orderCode;
           setPendingOrderId(orderId);
+          setPendingOrderCode(orderCode);
         }
         
-        const qrUrl = `https://img.vietqr.io/image/970422-2234502012005-compact.png?amount=${finalTotal}&addInfo=${orderId}&accountName=HA%20QUANG%20HUY`;
+        // Format addInfo: SCYTOL {OrderCode}
+        const addInfo = encodeURIComponent(`SCYTOL ${orderCode}`);
+        const qrUrl = `https://img.vietqr.io/image/970422-2234502012005-compact.png?amount=${finalTotal}&addInfo=${addInfo}&accountName=HA%20QUANG%20HUY`;
         setQrData(qrUrl);
         setSelectedMethod({ type: 'BANK', name: 'Chuyển khoản QR' }); 
         setCheckoutStep(3);
@@ -190,10 +196,33 @@ const Checkout = () => {
     }
   };
 
+  // Polling logic for online payment
+  useEffect(() => {
+    let intervalId;
+    if (checkoutStep === 3 && pendingOrderId) {
+      intervalId = setInterval(async () => {
+        try {
+          const { data } = await api.get(`/api/orders/${pendingOrderId}`);
+          if (data.status === 'Paid') {
+            clearInterval(intervalId);
+            clearCart();
+            showToast('success', 'Thanh toán thành công! 🎉', 'Cảm ơn bạn đã mua sắm.');
+            setTimeout(() => navigate('/orders'), 2000);
+          }
+        } catch (err) {
+          console.error('Polling error:', err);
+        }
+      }, 3000);
+    }
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, [checkoutStep, pendingOrderId, navigate, clearCart]);
+
   // Called when clicking "Hoàn tất đơn hàng" after QR is shown
   const handleFinalizeOnlineOrder = () => {
     clearCart();
-    showToast('success', 'Thanh toán thành công! 🎉', 'Cảm ơn bạn đã mua sắm.');
+    showToast('success', 'Đã ghi nhận! 🎉', 'Vui lòng chờ hệ thống xác nhận thanh toán.');
     setTimeout(() => navigate('/orders'), 1500);
   };
 

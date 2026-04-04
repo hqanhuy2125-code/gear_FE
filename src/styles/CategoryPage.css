@@ -198,7 +198,7 @@
 .info-text-side h2 {
   font-size: 32px;
   font-weight: 900;
-  color: var(--theme-accent);
+  color: #111111; /* Đổi sang màu tối để nổi bật trên nền pastel */
   letter-spacing: -0.03em;
   margin-bottom: 24px;
 }
@@ -206,7 +206,7 @@
 .info-text-side p {
   font-size: 16px;
   line-height: 1.8;
-  color: var(--clr-txt-2);
+  color: #1a1a1a; /* override: nền pastel sáng cần chữ tối để đủ contrast */
   margin-bottom: 16px;
 }
 

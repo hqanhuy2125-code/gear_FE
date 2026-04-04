@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import '../styles/Toast.css';
 
 export const CartContext = createContext();
@@ -27,9 +28,16 @@ export const CartProvider = ({ children }) => {
       return;
     }
 
+    const existingItem = cartItems.find(item => item.id === product.id);
+    const currentQty = existingItem ? existingItem.quantity : 0;
+    
+    if (!product.isPreOrder && !product.isOrderOnly && currentQty >= product.stock) {
+      alert(`Không thể thêm vào giỏ. Chỉ còn ${product.stock} sản phẩm trong kho!`);
+      return;
+    }
+
     // Show detailed modal
-    const stockMsg = Math.floor(Math.random() * 20) + 1;
-    setActiveToast({ ...product, randomStock: stockMsg });
+    setActiveToast(product);
     setIsClosing(false);
 
     // Auto-close after 5s
@@ -38,7 +46,6 @@ export const CartProvider = ({ children }) => {
     }, 5000);
 
     setCartItems(prevItems => {
-      const existingItem = prevItems.find(item => item.id === product.id);
       if (existingItem) {
         return prevItems.map(item => 
           item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
@@ -62,9 +69,16 @@ export const CartProvider = ({ children }) => {
 
   const increaseQuantity = (productId) => {
     setCartItems(prevItems => 
-      prevItems.map(item => 
-        item.id === productId ? { ...item, quantity: item.quantity + 1 } : item
-      )
+      prevItems.map(item => {
+        if (item.id === productId) {
+          if (!item.isPreOrder && !item.isOrderOnly && item.quantity >= item.stock) {
+            alert(`Chỉ còn ${item.stock} sản phẩm trong kho!`);
+            return item;
+          }
+          return { ...item, quantity: item.quantity + 1 };
+        }
+        return item;
+      })
     );
   };
 
@@ -113,13 +127,17 @@ export const CartProvider = ({ children }) => {
               <div className="cm-info">
                 <h4>{activeToast.name}</h4>
                 <p className="cm-price">{activeToast.price.toLocaleString('vi-VN')} ₫</p>
-                <p className="cm-stock">📦 Kho: Còn <strong>{activeToast.randomStock}</strong> sản phẩm</p>
+                {(!activeToast.isPreOrder && !activeToast.isOrderOnly) ? (
+                   <p className="cm-stock">📦 Kho: Còn <strong>{activeToast.stock}</strong> sản phẩm</p>
+                ) : (
+                   <p className="cm-stock">📦 Hàng đặt trước</p>
+                )}
               </div>
             </div>
 
             <div className="cart-modal-footer">
               <button className="btn-continue" onClick={closeToast}>Tiếp tục mua sắm</button>
-              <a href="/cart" className="btn-view-cart">Xem giỏ hàng →</a>
+              <Link to="/cart" className="btn-view-cart" onClick={closeToast}>Xem giỏ hàng →</Link>
             </div>
           </div>
         </div>
