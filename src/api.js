@@ -31,18 +31,23 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const res = await axios.post('http://localhost:5130/api/auth/refresh-token', {}, { withCredentials: true });
+        const res = await axios.post(`${BASE_URL}/api/auth/refresh-token`, {}, { withCredentials: true });
         
-        if (res.status === 200 && res.data.token) {
-          localStorage.setItem('token', res.data.token);
-          localStorage.setItem('user', JSON.stringify(res.data));
-          
-          originalRequest.headers.Authorization = `Bearer ${res.data.token}`;
-          return api(originalRequest);
+        if (res.status === 200 && res.data) {
+          const newToken = res.data.token || res.data.Token;
+          if (newToken) {
+            localStorage.setItem('token', newToken);
+            const userToStore = { ...res.data, token: newToken };
+            localStorage.setItem('user', JSON.stringify(userToStore));
+            
+            originalRequest.headers.Authorization = `Bearer ${newToken}`;
+            return api(originalRequest);
+          }
         }
       } catch (err) {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+        localStorage.removeItem('currentUser');
         window.location.href = '/login';
         return Promise.reject(err);
       }

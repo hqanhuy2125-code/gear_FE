@@ -1,14 +1,25 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ProductCard from '../components/ProductCard';
-import { products as allProducts } from '../data/products';
 import ProductPageAddons from '../components/ProductPageAddons';
 import '../styles/CategoryPage.css';
 
-const Mice = () => {
-  const products = allProducts.filter(p => p.category === 'mice');
-  const [visibleBlocks, setVisibleBlocks] = React.useState({});
+const API_BASE = 'http://localhost:5130';
 
-  React.useEffect(() => {
+const Mice = () => {
+  const [products, setProducts] = useState([]);
+  const [visibleBlocks, setVisibleBlocks] = useState({});
+
+  useEffect(() => {
+    fetch(`${API_BASE}/api/products?pageSize=100`)
+      .then(res => res.json())
+      .then(data => {
+        const prods = data.items || [];
+        setProducts(prods.map(p => ({ ...p, image: p.imageUrl })).filter(p => (p.category || '').toLowerCase() === 'mice'));
+      })
+      .catch(err => console.error(err));
+  }, []);
+
+  useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting && entry.target.classList.contains('animate-on-scroll')) {

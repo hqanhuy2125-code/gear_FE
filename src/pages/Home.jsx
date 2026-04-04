@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Zap, Shield, Award, ChevronRight, Keyboard, Mouse, Headphones, Package } from 'lucide-react';
-import { products } from '../data/products';
+import api from '../api';
 import '../styles/Home.css';
 
 const useReveal = () => {
@@ -49,6 +49,9 @@ const Home = () => {
     }
   }, [storeToast]);
 
+  const [products, setProducts] = useState([]);
+  const [activeFlashSale, setActiveFlashSale] = useState(null);
+
   useEffect(() => {
     if (sessionStorage.getItem('justLoggedIn') === 'true') {
       const userStr = localStorage.getItem('user');
@@ -60,12 +63,48 @@ const Home = () => {
       }
       sessionStorage.removeItem('justLoggedIn');
     }
+
+    const fetchData = async () => {
+      try {
+        const [prodRes, flashRes] = await Promise.all([
+          api.get('/api/products'),
+          api.get('/api/flash-sales').catch(() => ({ data: [] }))
+        ]);
+        
+        // ProductsController GET trả về { items = [..], totalPages, page }
+        const productList = prodRes.data.items || prodRes.data.products || prodRes.data.Products || prodRes.data;
+        let prods = Array.isArray(productList) ? productList.filter(p => !p.isHidden).map(p => ({
+          ...p,
+          image: p.imageUrl // Map imageUrl to image for frontend compatibility
+        })) : [];
+        
+        const now = new Date();
+        const activeFS = flashRes.data.find(fs => fs.isActive && new Date(fs.startTime) <= now && new Date(fs.endTime) >= now);
+        
+        if (activeFS && activeFS.productIds) {
+          setActiveFlashSale(activeFS);
+          const saleProductIds = activeFS.productIds.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
+          
+          prods = prods.map(p => {
+             if (saleProductIds.includes(p.id)) {
+                 return { ...p, sale: true, discount: activeFS.discountPercent };
+             }
+             return p;
+          });
+        }
+        
+        setProducts(prods);
+      } catch (err) {
+        console.error("Failed to load home data", err);
+      }
+    };
+    fetchData();
   }, []);
 
-  const featuredKeyboard    = products.find(p => p.category === 'keyboards');
-  const featuredMouse       = products.find(p => p.category === 'mice');
-  const featuredHeadphones  = products.find(p => p.category === 'headphones');
-  const featuredAccessories = products.find(p => p.category === 'accessories');
+  const featuredKeyboard    = products.find(p => p.category?.toLowerCase().includes('keyboard') || p.category?.toLowerCase().includes('bàn phím'));
+  const featuredMouse       = products.find(p => p.category?.toLowerCase().includes('mice') || p.category?.toLowerCase().includes('chuột'));
+  const featuredHeadphones  = products.find(p => p.category?.toLowerCase().includes('headphone') || p.category?.toLowerCase().includes('tai nghe'));
+  const featuredAccessories = products.find(p => p.category?.toLowerCase().includes('accessories') || p.category?.toLowerCase().includes('phụ kiện'));
   const topPicks = products.slice(0, 8);
 
   const highlights = [

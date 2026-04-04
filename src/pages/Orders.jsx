@@ -38,6 +38,7 @@ const STATUS_MAP = {
   'Chờ xác nhận': { label: '🔵 Chờ xác nhận', cls: 'status-pending' },
   'Chờ thanh toán': { label: '⏳ Chờ thanh toán', cls: 'status-waiting' },
   'Đã thanh toán': { label: '✅ Đã thanh toán', cls: 'status-paid' },
+  Paid:           { label: '✅ Đã thanh toán', cls: 'status-paid' },
   Confirmed: { label: '✅ Đã xác nhận', cls: 'status-paid' },
   'Đã xác nhận': { label: '✅ Đã xác nhận', cls: 'status-paid' },
   Shipping:  { label: '🚚 Đang giao',    cls: 'status-shipping' },
@@ -72,8 +73,8 @@ const OrderTimeline = ({ order }) => {
     { label: 'Đặt hàng', time: order.createdAt, status: 'Completed' },
     { 
       label: 'Thanh toán', 
-      time: (order.status === 'Đã thanh toán' || order.status === 'Confirmed' || order.status === 'Shipping' || order.status === 'Delivered') ? order.createdAt : (order.status === 'Cancelled' || order.status === 'Đã hủy') ? order.cancelledAt : null, 
-      status: (order.status === 'Đã thanh toán' || order.status === 'Confirmed' || order.status === 'Shipping' || order.status === 'Delivered') 
+      time: (order.status === 'Paid' || order.status === 'Đã thanh toán' || order.status === 'Confirmed' || order.status === 'Shipping' || order.status === 'Delivered') ? (order.paidAt || order.createdAt) : (order.status === 'Cancelled' || order.status === 'Đã hủy') ? order.cancelledAt : null, 
+      status: (order.status === 'Paid' || order.status === 'Đã thanh toán' || order.status === 'Confirmed' || order.status === 'Shipping' || order.status === 'Delivered') 
         ? 'Completed' 
         : (order.status === 'Cancelled' || order.status === 'Đã hủy') 
           ? 'Cancelled' 
@@ -176,6 +177,7 @@ const Orders = () => {
             setOrders(prev => prev.map(o => {
                 if (o.id === orderId) {
                     const updatedTimeField = 
+                      status === 'Paid' ? 'paidAt' :
                       status === 'Confirmed' ? 'confirmedAt' :
                       status === 'Shipping' ? 'shippingAt' : 
                       (status === 'Delivered' ? 'deliveredAt' : 'cancelledAt');

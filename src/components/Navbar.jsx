@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Search, ShoppingCart, ClipboardList, X, Bell } from 'lucide-react';
 import { CartContext } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
-import { products } from '../data/products';
 import '../styles/Navbar.css';
 
 let searchTimeout;
@@ -160,86 +159,102 @@ const Navbar = () => {
 
         {/* Center menu */}
         <div className="nav-menu">
-          <Link to="/sale" className="nav-link sale-link">Sale</Link>
-          <Link to="/keyboards" className="nav-link">Keyboards</Link>
-          <Link to="/mice" className="nav-link">Mice</Link>
-          <Link to="/headphones" className="nav-link">Headphones</Link>
-          <Link to="/accessories" className="nav-link">Accessories</Link>
-          <Link to="/web-driver" className="nav-link">Web Driver</Link>
-          <Link to="/reviews" className="nav-link">Reviews</Link>
-          <Link to="/blog" className="nav-link">Blog</Link>
+          {(user?.role === 'admin' || user?.role === 'owner') ? (
+            <>
+              {user.role === 'admin' ? (
+                <Link to="/admin/dashboard" className="nav-link" style={{color: '#0ea5e9'}}>🛡️ Admin Dashboard</Link>
+              ) : (
+                <Link to="/owner/dashboard" className="nav-link" style={{color: '#fbbf24'}}>👑 Owner Dashboard</Link>
+              )}
+            </>
+          ) : (
+            <>
+              <Link to="/sale" className="nav-link sale-link">Sale</Link>
+              <Link to="/keyboards" className="nav-link">Keyboards</Link>
+              <Link to="/mice" className="nav-link">Mice</Link>
+              <Link to="/headphones" className="nav-link">Headphones</Link>
+              <Link to="/accessories" className="nav-link">Accessories</Link>
+              <Link to="/web-driver" className="nav-link">Web Driver</Link>
+              <Link to="/reviews" className="nav-link">Reviews</Link>
+              <Link to="/blog" className="nav-link">Blog</Link>
+            </>
+          )}
         </div>
 
         {/* Right icons */}
         <div className="nav-icons">
-          <div className="search-container" ref={searchRef}>
-            <button className="icon-btn" onClick={toggleSearch} aria-label="Search">
-              {isSearchOpen ? <X size={22} /> : <Search size={22} />}
-            </button>
-            
-            {isSearchOpen && (
-              <div className="search-dropdown">
-                <input 
-                  type="text" 
-                  placeholder="Tìm kiếm sản phẩm..." 
-                  value={searchTerm}
-                  onChange={handleSearch}
-                  autoFocus
-                />
+          {!(user?.role === 'admin' || user?.role === 'owner') && (
+            <>
+              <div className="search-container" ref={searchRef}>
+                <button className="icon-btn" onClick={toggleSearch} aria-label="Search">
+                  {isSearchOpen ? <X size={22} /> : <Search size={22} />}
+                </button>
                 
-                {searchTerm && (
-                  <div className="search-results">
-                    {searchResults.length > 0 ? (
-                      searchResults.map(product => (
-                        <Link 
-                          to="/" 
-                          key={product.id} 
-                          className="search-item"
-                          onClick={() => setIsSearchOpen(false)}
-                        >
-                          <img src={product.image} alt={product.name} />
-                          <div className="search-item-info">
-                            <h4>{product.name}</h4>
-                            <span>{product.price.toLocaleString('vi-VN')} ₫</span>
-                          </div>
-                        </Link>
-                      ))
-                    ) : (
-                      <div className="search-no-results">Không tìm thấy sản phẩm.</div>
+                {isSearchOpen && (
+                  <div className="search-dropdown">
+                    <input 
+                      type="text" 
+                      placeholder="Tìm kiếm sản phẩm..." 
+                      value={searchTerm}
+                      onChange={handleSearch}
+                      autoFocus
+                    />
+                    
+                    {searchTerm && (
+                      <div className="search-results">
+                        {searchResults.length > 0 ? (
+                          searchResults.map(product => (
+                            <Link 
+                              to="/" 
+                              key={product.id} 
+                              className="search-item"
+                              onClick={() => setIsSearchOpen(false)}
+                            >
+                              <img src={product.image || product.imageUrl} alt={product.name} />
+                              <div className="search-item-info">
+                                <h4>{product.name}</h4>
+                                <span>{product.price.toLocaleString('vi-VN')} ₫</span>
+                              </div>
+                            </Link>
+                          ))
+                        ) : (
+                          <div className="search-no-results">Không tìm thấy sản phẩm.</div>
+                        )}
+                      </div>
                     )}
                   </div>
                 )}
               </div>
-            )}
-          </div>
 
-          <div className="notif-container" ref={notifRef}>
-             <button className="icon-btn notif-btn" onClick={() => setIsNotifOpen(!isNotifOpen)} aria-label="Notifications">
-                <Bell size={22} />
-                {unreadCount > 0 && <span className="notif-badge">{unreadCount}</span>}
-             </button>
-             {isNotifOpen && (
-                <div className="notif-dropdown">
-                   <div className="notif-header">Thông báo</div>
-                   <div className="notif-list">
-                      {notifications.length > 0 ? (
-                        notifications.map(n => (
-                          <div 
-                             key={n.id} 
-                             className={`notif-item ${!n.isRead ? 'unread' : ''}`}
-                             onClick={() => markNotifAsRead(n.id)}
-                          >
-                             <p className="notif-msg">{n.message}</p>
-                             <span className="notif-time">{new Date(n.createdAt).toLocaleString('vi-VN')}</span>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="notif-empty">Không có thông báo mới.</div>
-                      )}
-                   </div>
-                </div>
-             )}
-          </div>
+              <div className="notif-container" ref={notifRef}>
+                 <button className="icon-btn notif-btn" onClick={() => setIsNotifOpen(!isNotifOpen)} aria-label="Notifications">
+                    <Bell size={22} />
+                    {unreadCount > 0 && <span className="notif-badge">{unreadCount}</span>}
+                 </button>
+                 {isNotifOpen && (
+                    <div className="notif-dropdown">
+                       <div className="notif-header">Thông báo</div>
+                       <div className="notif-list">
+                          {notifications.length > 0 ? (
+                            notifications.map(n => (
+                              <div 
+                                 key={n.id} 
+                                 className={`notif-item ${!n.isRead ? 'unread' : ''}`}
+                                 onClick={() => markNotifAsRead(n.id)}
+                              >
+                                 <p className="notif-msg">{n.message}</p>
+                                 <span className="notif-time">{new Date(n.createdAt).toLocaleString('vi-VN')}</span>
+                              </div>
+                            ))
+                          ) : (
+                            <div className="notif-empty">Không có thông báo mới.</div>
+                          )}
+                       </div>
+                    </div>
+                 )}
+              </div>
+            </>
+          )}
           
           {user ? (
             <div className="user-menu-wrapper" ref={userMenuRef}>
@@ -284,27 +299,31 @@ const Navbar = () => {
                         </button>
                       </div>
                     )}
-                  <button
-                    type="button"
-                    className="user-dropdown-item"
-                    onClick={() => handleNavigateFromMenu('/profile')}
-                  >
-                    My Profile
-                  </button>
-                  <button
-                    type="button"
-                    className="user-dropdown-item"
-                    onClick={() => handleNavigateFromMenu('/orders')}
-                  >
-                    My Orders
-                  </button>
-                  <button
-                    type="button"
-                    className="user-dropdown-item"
-                    onClick={() => handleNavigateFromMenu('/wishlist')}
-                  >
-                    Wishlist
-                  </button>
+                  {!(user?.role === 'admin' || user?.role === 'owner') && (
+                    <>
+                      <button
+                        type="button"
+                        className="user-dropdown-item"
+                        onClick={() => handleNavigateFromMenu('/profile')}
+                      >
+                        My Profile
+                      </button>
+                      <button
+                        type="button"
+                        className="user-dropdown-item"
+                        onClick={() => handleNavigateFromMenu('/orders')}
+                      >
+                        My Orders
+                      </button>
+                      <button
+                        type="button"
+                        className="user-dropdown-item"
+                        onClick={() => handleNavigateFromMenu('/wishlist')}
+                      >
+                        Wishlist
+                      </button>
+                    </>
+                  )}
                   <button
                     type="button"
                     className="user-dropdown-item user-dropdown-logout"
@@ -321,15 +340,19 @@ const Navbar = () => {
             </Link>
           )}
 
-          <Link to="/orders" className="icon-btn" aria-label="Orders">
-            <ClipboardList size={22} />
-          </Link>
+          {!(user?.role === 'admin' || user?.role === 'owner') && (
+            <>
+              <Link to="/orders" className="icon-btn" aria-label="Orders">
+                <ClipboardList size={22} />
+              </Link>
 
-          <Link to="/cart" className="icon-btn cart-btn nav-link" aria-label="Cart" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '600' }}>
-            <ShoppingCart size={22} />
-            <span className="cart-text">CART</span>
-            <span className="cart-badge">{cartCount}</span>
-          </Link>
+              <Link to="/cart" className="icon-btn cart-btn nav-link" aria-label="Cart" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '600' }}>
+                <ShoppingCart size={22} />
+                <span className="cart-text">CART</span>
+                <span className="cart-badge">{cartCount}</span>
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </nav>

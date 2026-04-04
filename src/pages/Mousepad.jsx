@@ -1,10 +1,22 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ProductCard from '../components/ProductCard';
-import { products } from '../data/products';
+import ProductPageAddons from '../components/ProductPageAddons';
 import '../styles/CategoryPage.css';
 
+const API_BASE = 'http://localhost:5130';
+
 const Mousepad = () => {
-  const mousepadProducts = products.filter(p => p.category === 'mousepad');
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    fetch(`${API_BASE}/api/products?pageSize=100`)
+      .then(res => res.json())
+      .then(data => {
+        const prods = data.items || [];
+        setProducts(prods.map(p => ({ ...p, image: p.imageUrl })).filter(p => (p.category || '').toLowerCase() === 'mousepad'));
+      })
+      .catch(err => console.error(err));
+  }, []);
 
   return (
     <div className="all-products-page">
@@ -18,7 +30,7 @@ const Mousepad = () => {
       <section className="all-products-content section-white">
         <div className="container">
           <div className="products-grid">
-            {mousepadProducts.map((product) => (
+            {products.map((product) => (
               <ProductCard key={product.id} {...product} />
             ))}
           </div>

@@ -1,9 +1,10 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { CartProvider } from './contexts/CartContext';
 import { AuthProvider } from './contexts/AuthContext';
 import AdminRoute from './components/AdminRoute';
 import OwnerRoute from './components/OwnerRoute';
 import UserRoute from './components/UserRoute';
+import GuestOrCustomerRoute from './components/GuestOrCustomerRoute';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -23,8 +24,14 @@ import Profile from './pages/Profile';
 import Orders from './pages/Orders';
 import Wishlist from './pages/Wishlist';
 import AdminDashboard from './pages/AdminDashboard';
+import AdminOrders from './pages/AdminOrders';
+import AdminProducts from './pages/AdminProducts';
+import AdminUsers from './pages/AdminUsers';
 import AdminChat from './pages/AdminChat';
 import OwnerDashboard from './pages/OwnerDashboard';
+import OwnerVouchers from './pages/OwnerVouchers';
+import OwnerFlashSales from './pages/OwnerFlashSales';
+import OwnerSystemConfig from './pages/OwnerSystemConfig';
 import ProductDetail from './pages/ProductDetail';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import ReturnPolicy from './pages/ReturnPolicy';
@@ -39,30 +46,30 @@ import Security from './pages/Security';
 
 function App() {
   return (
-    <AuthProvider>
-      <CartProvider>
-        <Router>
+    <Router>
+      <AuthProvider>
+        <CartProvider>
           <Navbar />
           <div className="main-content">
             <Routes>
-              {/* Public routes */}
-              <Route path="/" element={<Home />} />
-              <Route path="/sale" element={<Sale />} />
-              <Route path="/accessories" element={<Accessories />} />
-              <Route path="/keyboards" element={<Keyboards />} />
-              <Route path="/mice" element={<Mice />} />
-              <Route path="/mousepad" element={<Mousepad />} />
-              <Route path="/headphones" element={<Headphones />} />
-              <Route path="/cart" element={<Cart />} />
+              {/* ===== PUBLIC ROUTES ===== */}
+              <Route path="/" element={<GuestOrCustomerRoute><Home /></GuestOrCustomerRoute>} />
+              <Route path="/sale" element={<GuestOrCustomerRoute><Sale /></GuestOrCustomerRoute>} />
+              <Route path="/accessories" element={<GuestOrCustomerRoute><Accessories /></GuestOrCustomerRoute>} />
+              <Route path="/keyboards" element={<GuestOrCustomerRoute><Keyboards /></GuestOrCustomerRoute>} />
+              <Route path="/mice" element={<GuestOrCustomerRoute><Mice /></GuestOrCustomerRoute>} />
+              <Route path="/mousepad" element={<GuestOrCustomerRoute><Mousepad /></GuestOrCustomerRoute>} />
+              <Route path="/headphones" element={<GuestOrCustomerRoute><Headphones /></GuestOrCustomerRoute>} />
+              <Route path="/cart" element={<GuestOrCustomerRoute><Cart /></GuestOrCustomerRoute>} />
               <Route path="/login" element={<Login />} />
-              <Route path="/blog" element={<Blog />} />
-              <Route path="/web-driver" element={<WebDriver />} />
-              <Route path="/wishlist" element={<Wishlist />} />
-              <Route path="/product/:id" element={<ProductDetail />} />
-              <Route path="/security" element={<Security />} />
-              <Route path="/reviews" element={<Reviews />} />
-              
-              {/* Informational & Policy Routes */}
+              <Route path="/blog" element={<GuestOrCustomerRoute><Blog /></GuestOrCustomerRoute>} />
+              <Route path="/web-driver" element={<GuestOrCustomerRoute><WebDriver /></GuestOrCustomerRoute>} />
+              <Route path="/wishlist" element={<GuestOrCustomerRoute><Wishlist /></GuestOrCustomerRoute>} />
+              <Route path="/product/:id" element={<GuestOrCustomerRoute><ProductDetail /></GuestOrCustomerRoute>} />
+              <Route path="/security" element={<GuestOrCustomerRoute><Security /></GuestOrCustomerRoute>} />
+              <Route path="/reviews" element={<GuestOrCustomerRoute><Reviews /></GuestOrCustomerRoute>} />
+
+              {/* Policy Routes */}
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/return-policy" element={<ReturnPolicy />} />
               <Route path="/shipping-policy" element={<ShippingPolicy />} />
@@ -70,32 +77,43 @@ function App() {
               <Route path="/about" element={<AboutUs />} />
               <Route path="/contact" element={<ContactUs />} />
               <Route path="/user-manual" element={<UserManual />} />
-              <Route path="/where-to-buy" element={<AboutUs />} /> {/* Placeholder to same About page */}
-              <Route path="/join-us" element={<AboutUs />} />      {/* Placeholder to same About page */}
-              <Route path="/affiliates" element={<AboutUs />} />   {/* Placeholder to same About page */}
-              <Route path="/distributor" element={<AboutUs />} />  {/* Placeholder to same About page */}
+              <Route path="/where-to-buy" element={<AboutUs />} />
+              <Route path="/join-us" element={<AboutUs />} />
+              <Route path="/affiliates" element={<AboutUs />} />
+              <Route path="/distributor" element={<AboutUs />} />
 
-              {/* User-protected routes */}
+              {/* ===== CUSTOMER-ONLY ROUTES ===== */}
               <Route path="/checkout" element={<UserRoute><Checkout /></UserRoute>} />
               <Route path="/orders" element={<UserRoute><Orders /></UserRoute>} />
               <Route path="/profile" element={<UserRoute><Profile /></UserRoute>} />
               <Route path="/vnpay-return" element={<UserRoute><VnPayReturn /></UserRoute>} />
 
-              {/* Admin-protected routes */}
-              <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
-              <Route path="/admin/orders" element={<AdminRoute><Orders /></AdminRoute>} />
-              <Route path="/admin/users" element={<AdminRoute><Profile /></AdminRoute>} />
+              {/* ===== ADMIN-ONLY ROUTES ===== */}
+              {/* Legacy redirect: /admin → /admin/dashboard */}
+              <Route path="/admin" element={<AdminRoute><Navigate to="/admin/dashboard" replace /></AdminRoute>} />
+              <Route path="/admin/dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+              <Route path="/admin/products" element={<AdminRoute><AdminProducts /></AdminRoute>} />
+              <Route path="/admin/orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />
+              <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
               <Route path="/admin/chat" element={<AdminRoute><AdminChat /></AdminRoute>} />
 
-              {/* Owner-protected routes */}
-              <Route path="/owner" element={<OwnerRoute><OwnerDashboard /></OwnerRoute>} />
+              {/* ===== OWNER-ONLY ROUTES ===== */}
+              {/* Legacy redirect: /owner → /owner/dashboard */}
+              <Route path="/owner" element={<OwnerRoute><Navigate to="/owner/dashboard" replace /></OwnerRoute>} />
+              <Route path="/owner/dashboard" element={<OwnerRoute><OwnerDashboard /></OwnerRoute>} />
+              <Route path="/owner/vouchers" element={<OwnerRoute><OwnerVouchers /></OwnerRoute>} />
+              <Route path="/owner/flash-sales" element={<OwnerRoute><OwnerFlashSales /></OwnerRoute>} />
+              <Route path="/owner/system-config" element={<OwnerRoute><OwnerSystemConfig /></OwnerRoute>} />
+
+              {/* Catch-all: 404 → Home */}
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </div>
           <Footer />
           <Chatbox />
-        </Router>
-      </CartProvider>
-    </AuthProvider>
+        </CartProvider>
+      </AuthProvider>
+    </Router>
   );
 }
 

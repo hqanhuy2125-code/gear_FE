@@ -19,8 +19,15 @@ const Login = () => {
   const [toastName, setToastName] = useState('');
   const [toastMessage, setToastMessage] = useState('');
 
+
   // OTP states
-  const [otpStep, setOtpStep] = useState(1); // 1: Login/Register form, 2: Enter OTP
+  const [isOtpStep, setIsOtpStep] = useState(false);
+  const [otp, setOtp] = useState('');
+  const [message, setMessage] = useState('');
+  const [displayName, setDisplayName] = useState('');
+  const [timer, setTimer] = useState(0);
+  
+  const [otpStep, setOtpStep] = useState(1); // Keep for potential other flows
   const [otpCode, setOtpCode] = useState(['', '', '', '', '', '']);
   const [countdown, setCountdown] = useState(0);
   const location = useLocation();
@@ -47,13 +54,17 @@ const Login = () => {
 
       // data = { id, name, email, role }
       login(data);
-      setToastName(data.name);
+      setToastName(data.name || data.Name);
       setToastMessage('Chào mừng trở lại');
       setShowToast(true);
 
       setTimeout(() => {
-        const from = location.state?.from || (data.role === 'owner' ? '/owner' : data.role === 'admin' ? '/admin' : '/');
-        navigate(from);
+        const getRedirect = (role) => {
+          if (role === 'owner') return '/owner/dashboard';
+          if (role === 'admin') return '/admin/dashboard';
+          return '/';
+        };
+        navigate(getRedirect(data.role || data.Role));
       }, 1500);
     } catch (err) {
       setError(err.message || 'Không thể kết nối đến máy chủ');
@@ -78,67 +89,15 @@ const Login = () => {
         throw new Error(data.message || 'Đăng nhập Google thất bại');
       }
 
+      // Transition to OTP step instead of direct login
       setEmail(data.email);
-      setName(data.name || '');
-      setOtpStep(2);
-      setCountdown(10);
-
-      const timer = setInterval(() => {
-        setCountdown((prev) => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
+      setDisplayName(data.name || data.email.split('@')[0]);
+      setIsOtpStep(true);
+      setTimer(60); // Standard 60s countdown
+      setMessage('Mã OTP đã được gửi đến Gmail');
+      setShowToast(true);
     } catch (err) {
       setError(err.message || 'Lỗi đăng nhập qua Google');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    setError('');
-
-    if (password.length < 6) {
-      setError('Mật khẩu phải có ít nhất 6 ký tự');
-      return;
-    }
-    if (password !== confirmPassword) {
-      setError('Mật khẩu xác nhận không khớp');
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      const res = await fetch(`${API_BASE}/api/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || 'Đăng ký thất bại');
-      }
-
-      setToastName(name);
-      setToastMessage('Đăng ký thành công! Đang chuyển về trang đăng nhập...');
-      setShowToast(true);
-
-      setTimeout(() => {
-        setShowToast(false);
-        setIsRegistering(false);
-        setPassword('');
-        setConfirmPassword('');
-      }, 2000);
-    } catch (err) {
-      setError(err.message || 'Không thể kết nối đến máy chủ');
     } finally {
       setLoading(false);
     }
@@ -181,8 +140,8 @@ const Login = () => {
 
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
-    const code = otpCode.join('');
-    if (code.length !== 6) {
+    const enteredOtp = otp || otpCode.join('');
+    if (enteredOtp.length !== 6) {
       setError('Vui lòng nhập đủ 6 số OTP');
       return;
     }
@@ -194,7 +153,7 @@ const Login = () => {
       const res = await fetch(`${API_BASE}/api/auth/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, code, name }),
+        body: JSON.stringify({ email, code: enteredOtp, name: displayName }),
       });
 
       const data = await res.json();
@@ -203,18 +162,61 @@ const Login = () => {
         throw new Error(data.message || 'Xác thực OTP thất bại');
       }
 
-      // data = { id, name, email, role }
       login(data);
-      setToastName(data.name);
+      setToastName(data.name || data.Name);
       setToastMessage('Chào mừng trở lại');
       setShowToast(true);
 
       setTimeout(() => {
-        const from = location.state?.from || (data.role === 'owner' ? '/owner' : data.role === 'admin' ? '/admin' : '/');
-        navigate(from);
+        const getRedirect = (role) => {
+          if (role === 'owner') return '/owner/dashboard';
+          if (role === 'admin') return '/admin/dashboard';
+          return '/';
+        };
+        navigate(getRedirect(data.role || data.Role));
       }, 1500);
     } catch (err) {
       setError(err.message || 'Lỗi xác thực OTP');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    if (password.length < 6) {
+      setError('Mật khẩu phải có ít nhất 6 ký tự');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('Mật khẩu xác nhận không khớp');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const res = await fetch(`${API_BASE}/api/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || 'Đăng ký thất bại');
+      }
+
+      setToastName(data.name);
+      setToastMessage('Đăng ký thành công, hãy đăng nhập nhé!');
+      setShowToast(true);
+      setIsRegistering(false);
+    } catch (err) {
+      setError(err.message || 'Không thể kết nối đến máy chủ');
     } finally {
       setLoading(false);
     }
@@ -236,8 +238,7 @@ const Login = () => {
 
   const handleOtpInputKeyDown = (index, e) => {
     if (e.key === 'Backspace' && !otpCode[index] && index > 0) {
-      const prevInput = document.getElementById(`otp-input-${index - 1}`);
-      if (prevInput) prevInput.focus();
+      document.getElementById(`otp-input-${index - 1}`).focus();
     }
   };
 
@@ -254,12 +255,12 @@ const Login = () => {
         </div>
       )}
 
-      <div className="login-card">
+      <div className="login-card" onClick={(e) => e.stopPropagation()}>
         <h2 className="login-title">
-          {otpStep === 2 ? 'NHẬP MÃ XÁC NHẬN' : (isRegistering ? 'ĐĂNG KÝ TÀI KHOẢN' : 'ĐĂNG NHẬP HỆ THỐNG')}
+          {isOtpStep ? 'NHẬP MÃ XÁC NHẬN' : (isRegistering ? 'ĐĂNG KÝ TÀI KHOẢN' : 'ĐĂNG NHẬP HỆ THỐNG')}
         </h2>
         <p className="login-subtitle">
-          {otpStep === 2 ? `Mã OTP đã được gửi đến ${email}` : (isRegistering ? 'Tạo tài khoản SCYTOL CLX21 mới' : 'Truy cập vào tài khoản SCYTOL CLX21 của bạn')}
+          {isOtpStep ? `Mã OTP đã được gửi đến ${email}` : (isRegistering ? 'Tạo tài khoản SCYTOL CLX21 mới' : 'Truy cập vào tài khoản SCYTOL CLX21 của bạn')}
         </p>
 
         {error && (
@@ -268,82 +269,83 @@ const Login = () => {
           </div>
         )}
 
-        {otpStep === 1 ? (
-          <form className="login-form" onSubmit={isRegistering ? handleRegister : handleLogin}>
-          {isRegistering && (
+        {!isOtpStep ? (
+          <form className="login-form" onSubmit={isRegistering ? handleRegister : handleLogin} autoComplete="off">
+            {isRegistering && (
+                <div className="form-group">
+                  <label htmlFor="name">Họ và tên</label>
+                  <input
+                    type="text"
+                    id="name"
+                    placeholder="Nhập họ tên của bạn"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                    disabled={loading}
+                  />
+                </div>
+              )}
             <div className="form-group">
-              <label htmlFor="name">Họ và tên</label>
+              <label htmlFor="email">Email</label>
               <input
-                type="text"
-                id="name"
-                placeholder="Nhập họ và tên"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                type="email"
+                id="email"
+                placeholder="example@gmail.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={loading}
+                autoComplete="off"
               />
             </div>
-          )}
-
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              placeholder="Email của bạn"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              disabled={loading}
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="password">Mật khẩu</label>
-            <input
-              type="password"
-              id="password"
-              placeholder="Nhập mật khẩu"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              disabled={loading}
-            />
-          </div>
-
-          {isRegistering && (
+            
             <div className="form-group">
-              <label htmlFor="confirmPassword">Xác nhận mật khẩu</label>
+              <label htmlFor="password">Mật khẩu</label>
               <input
                 type="password"
-                id="confirmPassword"
-                placeholder="Nhập lại mật khẩu"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                id="password"
+                placeholder="********"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={loading}
+                autoComplete="new-password"
               />
             </div>
-          )}
 
-          {!isRegistering && (
-            <div className="form-options">
-              <label className="remember-me">
-                <input type="checkbox" /> Ghi nhớ đăng nhập
-              </label>
-              <a href="#" className="forgot-password">Quên mật khẩu?</a>
-            </div>
-          )}
+            {isRegistering && (
+              <div className="form-group">
+                <label htmlFor="confirmPassword">Xác nhận mật khẩu</label>
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  placeholder="Nhập lại mật khẩu"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  disabled={loading}
+                />
+              </div>
+            )}
 
-          <button type="submit" className="login-submit-btn" disabled={loading}>
-            {loading ? (
-              <span className="login-spinner-wrap">
-                <span className="login-spinner" />
-                Đang xử lý...
-              </span>
-            ) : isRegistering ? 'Đăng ký' : 'Đăng nhập'}
-          </button>
-        </form>
+            {!isRegistering && (
+              <div className="form-options">
+                <label className="remember-me">
+                  <input type="checkbox" /> Ghi nhớ đăng nhập
+                </label>
+                <a href="#" className="forgot-password">Quên mật khẩu?</a>
+              </div>
+            )}
+
+            <button type="submit" className="login-submit-btn" disabled={loading}>
+              {loading ? (
+                <span className="login-spinner-wrap">
+                  <span className="login-spinner" />
+                  Đang xử lý...
+                </span>
+              ) : isRegistering ? 'Đăng ký' : 'Đăng nhập'}
+            </button>
+          </form>
         ) : (
           <form className="login-form" onSubmit={handleVerifyOtp}>
             <div className="form-group">
@@ -379,10 +381,19 @@ const Login = () => {
                 {countdown > 0 ? `Gửi lại sau ${countdown}s` : 'Gửi lại mã'}
               </button>
             </div>
+            
+            <button 
+              type="button" 
+              className="method-tab" 
+              style={{ width: '100%', marginTop: '1rem' }}
+              onClick={() => setIsOtpStep(false)}
+            >
+              Quay lại
+            </button>
           </form>
         )}
 
-        {otpStep === 1 && (
+        {!isOtpStep && (
           <>
             <div className="login-divider">
               <span>hoặc</span>

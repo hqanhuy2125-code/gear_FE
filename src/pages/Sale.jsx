@@ -1,45 +1,71 @@
 import React, { useState, useEffect } from 'react';
 import { Copy, CheckCircle2 } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
-import { products } from '../data/products';
 import '../styles/CategoryPage.css';
+
+const API_BASE = 'http://localhost:5130';
 
 const Sale = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [copied, setCopied] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [activeFlashSale, setActiveFlashSale] = useState(null);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [prodRes, flashRes] = await Promise.all([
+          fetch(`${API_BASE}/api/products?pageSize=100`).then(r=>r.json()),
+          fetch(`${API_BASE}/api/flash-sales`).then(r=>r.json()).catch(() => ([]))
+        ]);
+        
+        const prods = (prodRes.items || []).filter(p => !p.isHidden).map(p => ({ ...p, image: p.imageUrl }));
+        const now = new Date();
+        const activeFS = flashRes.find(fs => fs.isActive && new Date(fs.startTime) <= now && new Date(fs.endTime) >= now);
+        
+        if (activeFS && activeFS.productIds) {
+          setActiveFlashSale(activeFS);
+          const saleProductIds = activeFS.productIds.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
+          
+          setProducts(prods.map(p => {
+             if (saleProductIds.includes(p.id)) {
+                 return { ...p, sale: true, discount: activeFS.discountPercent };
+             }
+             return p;
+          }));
+        } else {
+          setProducts(prods);
+        }
+      } catch (err) {
+        console.error("Failed to load generic products", err);
+      }
+    };
+    fetchData();
+  }, []);
+
   const currentHour = currentTime.getHours();
-  const currentMin = currentTime.getMinutes();
-  const currentSec = currentTime.getSeconds();
-
-  let isFlashSaleActive = false;
-  let targetHour = 0;
+  // ... rest of the timing logic ...
+  let isFlashSaleActive = !!activeFlashSale;
+  let targetHour = activeFlashSale ? new Date(activeFlashSale.endTime).getHours() : 0;
   let nextSaleHour = 8;
-  let nextSaleMin = 0;
-
-  if (currentHour >= 8 && currentHour < 12) {
-    isFlashSaleActive = true;
-    targetHour = 12;
-  } else if (currentHour >= 13 && currentHour < 22) {
-    isFlashSaleActive = true;
-    targetHour = 22;
-  } else if (currentHour < 8 || currentHour >= 22) {
-    nextSaleHour = 8;
-  } else if (currentHour >= 12 && currentHour < 13) {
-    nextSaleHour = 13;
+  
+  if (!isFlashSaleActive) {
+      if (currentHour < 8 || currentHour >= 22) {
+        nextSaleHour = 8;
+      } else if (currentHour >= 12 && currentHour < 13) {
+        nextSaleHour = 13;
+      }
   }
 
   // Countdown string
   const getCountdownStr = () => {
     if (isFlashSaleActive) {
-      // Countdown to end of current session
-      const target = new Date(currentTime);
-      target.setHours(targetHour, 0, 0, 0);
+      const target = new Date(activeFlashSale.endTime);
       const diff = target - currentTime;
       if (diff <= 0) return '00:00:00';
       const h = Math.floor((diff / (1000 * 60 * 60)) % 24).toString().padStart(2, '0');
@@ -47,10 +73,8 @@ const Sale = () => {
       const s = Math.floor((diff / 1000) % 60).toString().padStart(2, '0');
       return `${h}:${m}:${s}`;
     } else {
-      // Countdown to next session
       const target = new Date(currentTime);
       if (currentHour >= 22) {
-        // next day 8am
         target.setDate(target.getDate() + 1);
         target.setHours(8, 0, 0, 0);
       } else {
@@ -65,7 +89,6 @@ const Sale = () => {
     }
   };
 
-  // Flash coupon code based on current date
   const d = new Date();
   const dayStr = d.getDate().toString().padStart(2, '0');
   const monthStr = (d.getMonth() + 1).toString().padStart(2, '0');

@@ -283,7 +283,7 @@ const OwnerDashboard = () => {
         </form>
 
         <div className="admin-list">
-          {loadingAdmins ? <div className="loading-small"><Loader2 className="animate-spin" /> Đang tải danh sách...</div> : admins.length === 0 ? <p className="empty-msg">Chưa có tài khoản admin nào được tạo.</p> : (
+          {loadingAdmins ? <div className="loading-small"><span>⏳</span> Đang tải danh sách...</div> : admins.length === 0 ? <p className="empty-msg">Chưa có tài khoản admin nào được tạo.</p> : (
             <div className="table-responsive">
               <table className="admin-table">
                 <thead>
@@ -323,8 +323,31 @@ const OwnerDashboard = () => {
           )}
         </div>
       </div>
+
+      {/* QUICK NAVIGATION */}
+      <div className="owner-admin-mgmt" style={{ marginTop: '2rem' }}>
+        <div className="section-header">
+          <h2>⚡ Quản lý nhanh</h2>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginTop: '1rem' }}>
+          {[
+            { icon: '🏷️', title: 'Voucher & Giảm giá', desc: 'Tạo, sửa, xóa mã giảm giá', link: '/owner/vouchers' },
+            { icon: '⚡', title: 'Flash Sale', desc: 'Quản lý chương trình flash sale', link: '/owner/flash-sales' },
+            { icon: '⚙️', title: 'Cấu hình Hệ thống', desc: 'Phí ship, chính sách đổi trả', link: '/owner/system-config' },
+          ].map(card => (
+            <a key={card.link} href={card.link} style={{ display:'block', background:'#0f172a', border:'1px solid #1e293b', borderRadius:14, padding:'1.2rem', textDecoration:'none', transition:'all 0.2s' }}
+              onMouseEnter={e=>e.currentTarget.style.borderColor='#fbbf24'}
+              onMouseLeave={e=>e.currentTarget.style.borderColor='#1e293b'}>
+              <div style={{ fontSize:'1.8rem', marginBottom:8 }}>{card.icon}</div>
+              <div style={{ fontWeight:700, color:'#f8fafc', marginBottom:4 }}>{card.title}</div>
+              <div style={{ fontSize:'0.8rem', color:'#64748b' }}>{card.desc}</div>
+            </a>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
 
 export default OwnerDashboard;
+

@@ -375,6 +375,7 @@ const Security = () => {
 
                 <div style={{ marginTop: 28 }}>
                   <div style={{ fontSize: 12, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>ALLOWED ORIGINS</div>
+                  <div style={S.originRow(true)}>✅ <span>{window.location.origin}</span></div>
                   <div style={S.originRow(true)}>✅ <span>http://localhost:5173</span></div>
                   <div style={S.originRow(true)}>✅ <span>http://localhost:5174</span></div>
                   <div style={S.originRow(false)}>❌ <span>* All other domains → BLOCKED</span></div>
@@ -415,7 +416,7 @@ const Security = () => {
                 <div style={{ marginTop: 90, background: 'rgba(0,0,0,0.4)', borderRadius: 12, padding: '20px', border: '1px solid rgba(255,255,255,0.06)' }}>
                   <div style={{ fontSize: 12, color: '#64748b', marginBottom: 10 }}>CORS CONFIG (Program.cs)</div>
                   <pre style={{ fontFamily: 'monospace', fontSize: 12, color: '#a78bfa', margin: 0 }}>{`.WithOrigins(
-  "http://localhost:5173",
+  "${window.location.origin}",
   "http://localhost:5174"
 )
 .WithHeaders("Authorization", "Content-Type")
